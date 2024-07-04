@@ -107,12 +107,12 @@ async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: 
         print(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Serve the React app
-app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="frontend")
+# # Serve the React app
+# app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="frontend")
 
-@app.get("/{full_path:path}")
-async def serve_frontend(full_path: str):
-    return FileResponse("../frontend/build/index.html")
+# @app.get("/{full_path:path}")
+# async def serve_frontend(full_path: str):
+#     return FileResponse("../frontend/build/index.html")
 
 if __name__ == "__main__":
     import uvicorn
