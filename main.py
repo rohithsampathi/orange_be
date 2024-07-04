@@ -32,14 +32,14 @@ async def startup_event():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://orange-7mfwj47o5-rohithsampathis-projects.vercel.app"],
+    allow_origins=["https://orange-7mfwj47o5-rohithsampathis-projects.vercel.app", "orange-fe.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Secret key for JWT encoding/decoding. In production, use a secure key and store it safely.
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = "8ea0593056926eb6901939f679b832ea"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
