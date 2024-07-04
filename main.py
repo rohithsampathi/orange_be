@@ -1,6 +1,4 @@
 from fastapi import FastAPI, HTTPException, Depends
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -10,6 +8,12 @@ from datetime import datetime, timedelta
 from utils.agt import generate_orange_reel  # Import the generate_orange_reel function
 from utils.context import why_luxofy
 from fastapi import BackgroundTasks
+from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -76,15 +80,23 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
-@app.post("/token", response_model=Token)
+# In the login_for_access_token function:
+@app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    logger.info(f"Login attempt for user: {form_data.username}")
+    logger.info(f"Available users: {list(users_db.keys())}")
     user = users_db.get(form_data.username)
-    if not user or form_data.password != user["password"]:
+    if not user:
+        logger.warning(f"User not found: {form_data.username}")
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if form_data.password != user["password"]:
+        logger.warning(f"Incorrect password for user: {form_data.username}")
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user["username"]}, expires_delta=access_token_expires
     )
+    logger.info(f"Login successful for user: {form_data.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/api/generate_orange_reel")
