@@ -6,7 +6,7 @@ from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
 from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy  # Import the generate_orange_reel function
-from utils.context import why_luxofy
+from utils.context import why_luxofy, why_1acre, why_montaigne
 from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 import logging
@@ -105,6 +105,10 @@ async def generate_orange_reel_endpoint(request: ContentRequest, background_task
     try:
         if request.client == "Luxofy":
             context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
