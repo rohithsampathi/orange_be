@@ -10,12 +10,24 @@ from utils.context import why_luxofy
 from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 import logging
+import sys
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+# At the start of your FastAPI app
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting up the application")
+    logger.info(f"ALGORITHM: {ALGORITHM}")
+    logger.info(f"ACCESS_TOKEN_EXPIRE_MINUTES: {ACCESS_TOKEN_EXPIRE_MINUTES}")
+    logger.info(f"Users in database: {list(users_db.keys())}")
 
 
 app.add_middleware(
@@ -84,7 +96,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 @app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     logger.info(f"Login attempt for user: {form_data.username}")
-    logger.info(f"Available users: {list(users_db.keys())}")
     user = users_db.get(form_data.username)
     if not user:
         logger.warning(f"User not found: {form_data.username}")
@@ -92,11 +103,11 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     if form_data.password != user["password"]:
         logger.warning(f"Incorrect password for user: {form_data.username}")
         raise HTTPException(status_code=400, detail="Incorrect username or password")
+    logger.info(f"Login successful for user: {form_data.username}")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user["username"]}, expires_delta=access_token_expires
     )
-    logger.info(f"Login successful for user: {form_data.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/api/generate_orange_reel")
