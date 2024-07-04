@@ -46,6 +46,7 @@ why_luxofy = """
         Brand Promise:
         Luxofy stands as a concierge to luxury realty, committed to transforming property dreams into splendid realities. From the initial thought to keys in hand, Luxofy simplifies and elevates the entire luxury home buying journey.
 
+        Target Audience: HNWI, UHNWIs, Businessmen, Entrepreneurs, Celebrities, Sports people
 
 """
 
@@ -67,6 +68,7 @@ why_1acre = """
         1acre's mission appears to be twofold: to bring transparency to a historically opaque market, and to democratize access to land information. This approach has the potential to benefit various stakeholders, from individual investors looking for opportunities, to landowners seeking fair value for their properties, to developers scouting for suitable locations.
         By focusing on data integrity, user empowerment, and comprehensive services, 1acre is positioning itself as more than just a land listing platform. It's evolving into an ecosystem for land-related information and transactions in India, with the potential to significantly impact how land is bought, sold, and understood in the country.
 
+        Target Audience: HNWI, UHNWIs, Businessmen, Entrepreneurs, Celebrities, Sports people
 
 """
 
@@ -107,6 +109,7 @@ why_montaigne = """
 
         This pitch is designed to convey the essence of Montaigne's capabilities, achievements, and potential for transformative impact, tailored to resonate with an audience committed to meaningful philanthropy and innovation.
 
+        Target Audience: Businessmen, Entrepreneurs with high stakes and big business goals
 
 """
 
