@@ -204,15 +204,15 @@ async def generate_orange_poll(request, context):
 
     Approach:
     Create a concise narrative that resonates with the target audience
-    Use one thought-provoking question or statement
+    Use one interst generating question or statement
     Highlight the property's utility and unique aspects
     Imply exclusivity without being overt
 
     Output instructions:
     Provide 1 social media post of 4-6 lines
     Use plain, clear language without sales pitches
-    Make the property appealing without explicitly asking to buy
-    Include only essential details and contact information
+    Make the property interesting without explicitly asking to buy
+    Include only essential details and make the user call +91 9959994737 to get in touch. Else, user can DM us for more queries on buyinf, selling or partnerships.
 
     Ensure the tone is:
     Informative and straightforward
