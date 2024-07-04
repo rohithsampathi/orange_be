@@ -32,7 +32,7 @@ async def startup_event():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allow all origins for simplicity, adjust as needed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -82,7 +82,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
-@app.post("/token")
+@app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     logger.info(f"Login attempt for user: {form_data.username}")
     user = users_db.get(form_data.username)
@@ -106,7 +106,7 @@ async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: 
             context = why_luxofy
         
         # Cancel any existing tasks for this user
-        task_key = f"task_{current_user['username']}"
+        task_key = f"task_{current_user.username}"
         if hasattr(app.state, task_key):
             existing_task = getattr(app.state, task_key)
             if existing_task and hasattr(existing_task, 'cancel'):
@@ -116,7 +116,7 @@ async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: 
         result = await generate_orange_reel(request, context)
         return {"result": result}
     except Exception as e:
-        print(f"Error generating reel: {e}")
+        logger.error(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
