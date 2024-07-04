@@ -1,18 +1,16 @@
-import os
-import sys
-import logging
-from datetime import datetime, timedelta
-from typing import Optional
-
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 from jose import jwt
-
-from utils.agt import generate_orange_reel
+from datetime import datetime, timedelta
+from utils.agt import generate_orange_reel  # Import the generate_orange_reel function
 from utils.context import why_luxofy
+from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
+import logging
+import sys
 
 # Set up logging
 logging.basicConfig(
@@ -32,9 +30,10 @@ async def startup_event():
     logger.info(f"Users in database: {list(users_db.keys())}")
     logger.info(f"SECRET_KEY: {SECRET_KEY}")
 
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for simplicity, adjust as needed
+    allow_origins=["*"],  # Allows all origins. Change this to the specific origins in production.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,7 +54,7 @@ class ReelRequest(BaseModel):
     client: str
     additional_input: Optional[str] = None
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -84,7 +83,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
-@app.post("/token", response_model=Token)
+@app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     logger.info(f"Login attempt for user: {form_data.username}")
     user = users_db.get(form_data.username)
@@ -104,12 +103,21 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @app.post("/api/generate_orange_reel")
 async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
-        context = why_luxofy if request.client == "Luxofy" else ""
+        if request.client == "Luxofy":
+            context = why_luxofy
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
         # Create a new task
         result = await generate_orange_reel(request, context)
         return {"result": result}
     except Exception as e:
-        logger.error(f"Error generating reel: {e}")
+        print(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

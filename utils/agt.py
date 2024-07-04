@@ -15,7 +15,7 @@ async def generate_orange_reel(request, context):
     writing_style = f"""
     Objective:
     
-    From your knowledge from the book Alchemy, and employing minimalism, craft a compelling Facebook post with agenda as agenda, mood and other details as in input
+    You are a master Communicator who learned best non-salesy communications from Harvard and reading books of minimalistic selling. From your knowledge from the book Alchemy, and employing minimalism, craft a compelling Facebook post with agenda as agenda, mood and other details as in input
     """
     
     print("Processing with Orange Reel")
@@ -27,10 +27,10 @@ async def generate_orange_reel(request, context):
             response = await client.post(
                 'https://api.openai.com/v1/chat/completions',
                 json={
-                    "model": "gpt-4-turbo-2024-04-09",
+                    "model": "gpt-4o-2024-05-13",
                     "messages": [
                         {"role": "system", "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {additional_input}"},
-                        {"role": "user", "content": f"Below is the user input \n Agenda: {agenda} \n Mood: {mood} \n About Our Company: {context} \n Additional Input: {additional_input} \n Use this information to create the content as per the provided strategy and guidelines. Strictly follow instructions. Keep the language simple and business professional. Use limited yet effective emojis."}
+                        {"role": "user", "content": f"Below is the user input \n Agenda: {agenda} \n Mood: {mood} \n About Our Company: {context} \n Additional Input: {additional_input} \n Follow writing instructions strictly. Use limited and professional emojis"}
                     ]
                 },
                 headers={"Authorization": f"Bearer {api_key}"}
