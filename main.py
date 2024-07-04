@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
@@ -11,6 +12,15 @@ from utils.context import why_luxofy
 from fastapi import BackgroundTasks
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://orange-7mfwj47o5-rohithsampathis-projects.vercel.app"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Secret key for JWT encoding/decoding. In production, use a secure key and store it safely.
 SECRET_KEY = "your_secret_key"
