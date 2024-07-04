@@ -219,6 +219,20 @@ async def generate_orange_poll(request, context):
     Subtly persuasive
     Aligned with the property's character
 
+    Output Format:
+    40 acres | ₹7 lakhs per acre | Near Yavatmal, Maharashtra | Link in bio 
+
+    \n - Verified and facilitated by 1acre.in
+    \n - Extremely fertile, canal-irrigated land
+    \n - Only 6 hours from Hyderabad
+    \n - Well-connected to national highways, expressways, and railways
+    \n - Ideal for active agriculture and investment
+    \n
+    \n Interested? Get in touch now! 📞 +91 9959994737
+    \n
+    \n 📬📩 DM us for more queries on buying, selling, or partnerships
+
+
 
     """
     
