@@ -1,16 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends
+import os
+import sys
+import logging
+from datetime import datetime, timedelta
+from typing import Optional
+
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 from jose import jwt
-from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel  # Import the generate_orange_reel function
+
+from utils.agt import generate_orange_reel
 from utils.context import why_luxofy
-from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
-import logging
-import sys
 
 # Set up logging
 logging.basicConfig(
@@ -53,7 +55,7 @@ class ReelRequest(BaseModel):
     client: str
     additional_input: Optional[str] = None
 
-def create_access_token(data: dict, expires_delta: timedelta = None):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -102,16 +104,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @app.post("/api/generate_orange_reel")
 async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
-        if request.client == "Luxofy":
-            context = why_luxofy
-        
-        # Cancel any existing tasks for this user
-        task_key = f"task_{current_user.username}"
-        if hasattr(app.state, task_key):
-            existing_task = getattr(app.state, task_key)
-            if existing_task and hasattr(existing_task, 'cancel'):
-                existing_task.cancel()
-        
+        context = why_luxofy if request.client == "Luxofy" else ""
         # Create a new task
         result = await generate_orange_reel(request, context)
         return {"result": result}
