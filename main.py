@@ -21,14 +21,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-# At the start of your FastAPI app
+
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up the application")
     logger.info(f"ALGORITHM: {ALGORITHM}")
     logger.info(f"ACCESS_TOKEN_EXPIRE_MINUTES: {ACCESS_TOKEN_EXPIRE_MINUTES}")
     logger.info(f"Users in database: {list(users_db.keys())}")
-
+    logger.info(f"SECRET_KEY: {SECRET_KEY}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,16 +37,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Secret key for JWT encoding/decoding. In production, use a secure key and store it safely.
-SECRET_KEY = "8ea0593056926eb6901939f679b832ea"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-# This is a simple in-memory user store. In a real application, you'd use a database.
-users_db = {
-    "testuser": {"username": "testuser", "password": "testpass"}
-}
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -92,7 +82,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
-# In the login_for_access_token function:
 @app.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     logger.info(f"Login attempt for user: {form_data.username}")
@@ -129,13 +118,6 @@ async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: 
     except Exception as e:
         print(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-# # Serve the React app
-# app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="frontend")
-
-# @app.get("/{full_path:path}")
-# async def serve_frontend(full_path: str):
-#     return FileResponse("../frontend/build/index.html")
 
 if __name__ == "__main__":
     import uvicorn

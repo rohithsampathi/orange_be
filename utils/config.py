@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 
 # Secret key for JWT encoding/decoding. In production, use a secure key and store it safely.
-SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
+SECRET_KEY = os.getenv("SECRET_KEY", "your_default_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
