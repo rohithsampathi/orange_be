@@ -230,7 +230,7 @@ async def generate_orange_poll(request, context):
     \n
     Interested? Get in touch now! 📞 +91 9959994737
     \n
-    \n 📬📩 DM us for more queries on buying, selling, or partnerships
+    📬📩 DM us for more queries on buying, selling, or partnerships
 
 
 
