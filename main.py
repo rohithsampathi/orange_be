@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel  # Import the generate_orange_reel function
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy  # Import the generate_orange_reel function
 from utils.context import why_luxofy
 from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
@@ -48,7 +48,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-class ReelRequest(BaseModel):
+class ContentRequest(BaseModel):
     agenda: str
     mood: str
     client: str
@@ -101,7 +101,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/api/generate_orange_reel")
-async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+async def generate_orange_reel_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
         if request.client == "Luxofy":
             context = why_luxofy
@@ -119,6 +119,70 @@ async def generate_orange_reel_endpoint(request: ReelRequest, background_tasks: 
     except Exception as e:
         print(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/api/generate_orange_post")
+async def generate_orange_post_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+    try:
+        if request.client == "Luxofy":
+            context = why_luxofy
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
+        # Create a new task
+        result = await generate_orange_post(request, context)
+        return {"result": result}
+    except Exception as e:
+        print(f"Error generating reel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/generate_orange_poll")
+async def generate_orange_poll_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+    try:
+        if request.client == "Luxofy":
+            context = why_luxofy
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
+        # Create a new task
+        result = await generate_orange_poll(request, context)
+        return {"result": result}
+    except Exception as e:
+        print(f"Error generating reel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/generate_orange_strategy")
+async def generate_orange_strategy_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+    try:
+        if request.client == "Luxofy":
+            context = why_luxofy
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
+        # Create a new task
+        result = await generate_orange_strategy(request, context)
+        return {"result": result}
+    except Exception as e:
+        print(f"Error generating reel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn
