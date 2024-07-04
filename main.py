@@ -130,6 +130,10 @@ async def generate_orange_post_endpoint(request: ContentRequest, background_task
     try:
         if request.client == "Luxofy":
             context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -151,6 +155,10 @@ async def generate_orange_poll_endpoint(request: ContentRequest, background_task
     try:
         if request.client == "Luxofy":
             context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -172,6 +180,10 @@ async def generate_orange_strategy_endpoint(request: ContentRequest, background_
     try:
         if request.client == "Luxofy":
             context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
