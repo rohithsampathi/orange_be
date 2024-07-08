@@ -48,18 +48,19 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-class ContentRequest(BaseModel):
+class GeneralRequest(BaseModel):
     agenda: str
     mood: str
     client: str
     additional_input: Optional[str] = None
 
-
 class EmailRequest(BaseModel):
     receiver: str
     client_company: str
-    our_company: str
+    client: str
+    target_industry: str
     additional_input: Optional[str] = None
+
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
@@ -109,7 +110,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/api/generate_orange_reel")
-async def generate_orange_reel_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+async def generate_orange_reel_endpoint(request: GeneralRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
         if request.client == "Luxofy":
             context = why_luxofy
@@ -161,7 +162,7 @@ async def generate_orange_email_endpoint(request: EmailRequest, background_tasks
     
 
 @app.post("/api/generate_orange_post")
-async def generate_orange_post_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+async def generate_orange_post_endpoint(request: GeneralRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
         if request.client == "Luxofy":
             context = why_luxofy
@@ -186,7 +187,7 @@ async def generate_orange_post_endpoint(request: ContentRequest, background_task
 
 
 @app.post("/api/generate_orange_poll")
-async def generate_orange_poll_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+async def generate_orange_poll_endpoint(request: GeneralRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
         if request.client == "Luxofy":
             context = why_luxofy
