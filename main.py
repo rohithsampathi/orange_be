@@ -144,7 +144,8 @@ async def generate_orange_email_endpoint(request: EmailRequest, background_tasks
         elif request.client == "Montaigne":
             context = why_montaigne
         
-        industry = request.industry
+        # Use target_industry instead of industry
+        industry = request.target_industry
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -157,7 +158,7 @@ async def generate_orange_email_endpoint(request: EmailRequest, background_tasks
         result = await generate_orange_email(request, context, industry)
         return {"result": result}
     except Exception as e:
-        print(f"Error generating reel: {e}")
+        print(f"Error generating email: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     
 
