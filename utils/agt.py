@@ -3,9 +3,41 @@ import httpx
 import traceback
 from dotenv import load_dotenv
 import asyncio
+from datetime import datetime, timedelta
+from .config import client, index
+import time
 
 # Load environment variables
 load_dotenv()
+
+
+def retrieve_and_generate_answer_3d(query, days_ago=60):
+    print("Generating New Context. Phew Seriously?")
+
+    # Calculate UNIX epoch time for 'days_ago' days ago from now
+    cutoff_timestamp = datetime.now() - timedelta(days=days_ago)
+    cutoff_unix = int(time.mktime(cutoff_timestamp.timetuple()))
+
+    # Get query embedding
+    xq = client.embeddings.create(input=[query], model="text-embedding-ada-002").data[0].embedding
+
+    # Update the query call to use keyword arguments
+    res = index.query(
+        vector=xq,
+        filter={"timestamp": {"$gte": cutoff_unix}},
+        top_k=7,
+        include_metadata=True
+    )
+
+    contexts = []
+    for match in res['matches']:
+        if 'Analysis' in match['metadata']:
+            contexts.append(match['metadata']['Analysis'])
+        else:
+            contexts.append("No Analysis Found")
+    print(contexts)
+    
+    return contexts
 
 async def generate_orange_reel(request, context):
     agenda = request.agenda
@@ -362,5 +394,100 @@ async def generate_orange_strategy(request, context):
         return "Task cancelled"
     except Exception as e:
         print(f"Unexpected error in Orange Strategy: {e}")
+        traceback.print_exc()
+        return "Error generating content"
+    
+
+
+async def generate_orange_email(request, context, industry):
+    receiver = request.receiver
+    client_company = request.client_company
+    additional_input = request.additional_input
+    
+    writing_style = f"""
+        # CEO-to-CEO Outreach Message Generator
+
+        ## Context
+        You are Rohith Sampathi, founder of Montaigne Smart Business Solutions, a company specializing in strategic growth and market expansion across various industries, with particular expertise in real estate. Your task is to craft a brief, personalized outreach message to the CEO of a target company.
+
+        ## Input
+        You will receive the following information:
+        1. Target CEO's name and company
+        2. Brief description of the target company's recent achievements or challenges
+        3. Relevant industry trends or market developments
+        4. Any specific Montaigne achievements or insights related to the target company's industry
+
+        ## Output Guidelines
+        Generate a concise, personalized message with the following characteristics:
+
+        1. Length: 100-150 words maximum
+        2. Tone: Casual yet professional, CEO-to-CEO conversation
+        3. Structure:
+        - Brief acknowledgment of the CEO's recent achievement or challenge
+        - Introduce yourself and Montaigne with a relevant accomplishment
+        - Share 2-3 concise, thought-provoking insights or questions related to their industry
+        - End with a low-pressure invitation to connect
+
+        4. Style:
+        - Use short, punchy sentences
+        - Avoid jargon or overly formal language
+        - Include a mix of statements and questions to engage the reader
+        - Maintain a humble yet confident tone
+
+        5. Content:
+        - Focus on providing value through insights or questions
+        - Subtly demonstrate your expertise without being boastful
+        - Tailor the content to the specific industry and company situation
+        - Avoid explicit sales pitches or lengthy service descriptions
+
+        6. Closing:
+        - Include a brief, friendly sign-off
+        - Provide your name, company name, and email only
+
+        ## Example
+        Use the following as a general template, adapting the content to fit the specific input:
+
+    """
+    
+    print("Processing with Orange Email")
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    try:
+        timeout = httpx.Timeout(1500.0, connect=6000.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(
+                'https://api.openai.com/v1/chat/completions',
+                json={
+                    "model": "gpt-4o-2024-05-13",
+                    "messages": [
+                        {"role": "system", "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {additional_input}"},
+                        {"role": "user", "content": f"Below is the user input \n Receipient: {receiver} \n Receiver Company: {client_company} \n About Our Company: {context} \n Latest Industry Development: {industry} \n Follow writing instructions strictly. Do not give ** in the output. "}
+                    ]
+                },
+                headers={"Authorization": f"Bearer {api_key}"}
+            )
+        # Check if the task has been cancelled
+            if asyncio.current_task().cancelled():
+                return "Task cancelled"
+        response_data = response.json()
+        print("API Response:", response_data)
+
+        if 'choices' in response_data and response_data['choices']:
+            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+            char_count_output = len(result)
+            char_count_input = len(writing_style) + len(agenda) + len(mood) + len(request.client) + (len(additional_input) if additional_input else 0)
+            input_cost = char_count_input * 0.01 / 4000
+            output_cost = char_count_output * 0.03 / 4000
+            total_cost = input_cost + output_cost
+            cost_in_inr = total_cost * 86
+            print(f"Orange Email Input: {input_cost}, Orange Email Output: {output_cost}, Orange Email Total Cost: {total_cost}, Orange Email Cost in INR: {cost_in_inr} ")
+            return result
+            # print("Generated Reel Content:", result)
+        else:
+            print("No Email generated")
+    except asyncio.CancelledError:
+        return "Task cancelled"
+    except Exception as e:
+        print(f"Unexpected error in Orange Email: {e}")
         traceback.print_exc()
         return "Error generating content"

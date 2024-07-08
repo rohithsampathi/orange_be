@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy  # Import the generate_orange_reel function
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d
 from utils.context import why_luxofy, why_1acre, why_montaigne
 from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
@@ -53,6 +53,14 @@ class ContentRequest(BaseModel):
     mood: str
     client: str
     additional_input: Optional[str] = None
+
+
+class EmailRequest(BaseModel):
+    receiver: str
+    client_company: str
+    our_company: str
+    additional_input: Optional[str] = None
+
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -119,6 +127,33 @@ async def generate_orange_reel_endpoint(request: ContentRequest, background_task
         
         # Create a new task
         result = await generate_orange_reel(request, context)
+        return {"result": result}
+    except Exception as e:
+        print(f"Error generating reel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+@app.post("/api/generate_orange_email")
+async def generate_orange_email_endpoint(request: EmailRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+    try:
+        if request.client == "Luxofy":
+            context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
+        
+        industry = request.industry
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
+        # Create a new task
+        result = await generate_orange_email(request, context, industry)
         return {"result": result}
     except Exception as e:
         print(f"Error generating reel: {e}")
