@@ -212,7 +212,7 @@ async def generate_orange_poll_endpoint(request: GeneralRequest, background_task
 
 
 @app.post("/api/generate_orange_strategy")
-async def generate_orange_strategy_endpoint(request: ContentRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+async def generate_orange_strategy_endpoint(request: GeneralRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     try:
         if request.client == "Luxofy":
             context = why_luxofy
