@@ -475,7 +475,7 @@ async def generate_orange_email(request, context, industry):
         if 'choices' in response_data and response_data['choices']:
             result = response_data['choices'][0].get('message', {}).get('content', '').strip()
             char_count_output = len(result)
-            char_count_input = len(writing_style) + len(agenda) + len(mood) + len(request.client) + (len(additional_input) if additional_input else 0)
+            char_count_input = len(writing_style) + len(receiver) + len(client_company) + len(request.client) + + len(industry) + len(context) + (len(additional_input) if additional_input else 0)
             input_cost = char_count_input * 0.01 / 4000
             output_cost = char_count_output * 0.03 / 4000
             total_cost = input_cost + output_cost
