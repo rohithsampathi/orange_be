@@ -6,6 +6,10 @@ import asyncio
 from datetime import datetime, timedelta
 from .config import client, index
 import time
+from utils.database import get_recent_chats, save_chat
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -491,3 +495,79 @@ async def generate_orange_email(request, context, industry):
         print(f"Unexpected error in Orange Email: {e}")
         traceback.print_exc()
         return "Error generating content"
+    
+
+async def generate_orange_chat(industry, purpose, client, user_input, context):
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    try:
+        # Attempt to fetch recent chats, but continue if it fails
+        try:
+            recent_chats = get_recent_chats(industry, client, purpose)
+            fetched_talks = "\n".join([f"User: {msg['role'] == 'user'}\nOrange: {msg['role'] == 'assistant'}" for chat in recent_chats for msg in chat['messages']])
+        except Exception as e:
+            logger.error(f"Failed to fetch recent chats: {e}")
+            fetched_talks = ""  # Continue with empty chat history if fetching fails
+    
+        writing_style = f"""
+        As Orange Sampathi, the Chief Strategy Officer, you're engaging in a casual yet professional conversation with our client about the {industry} industry. You're leveraging the latest market developments and the client's specific needs to make complex information feel simple and engaging.
+
+        Begin the discussion by greeting the client warmly, setting a relaxed tone. Use the following approach to guide the conversation:
+
+        1. **Engage with Contextual Insights:**
+        - "It's great to see you! I've been following the recent moves by [major player], and their latest innovation is fascinating. It seems like it could shift the market dynamics quite a bit. What do you think?"
+        - "We've seen some interesting shifts in customer behavior lately. For example, there's a growing trend towards [trend/feature]. It seems like customers are really embracing this change. Have you noticed this as well?"
+
+        2. **Discuss Strategic Focus:**
+        - "Given these market changes, I've been thinking about how we can position ourselves to stay ahead. Focusing on [strategic focus] might be crucial. This could really set us apart and address the evolving needs of our customers. How does that align with your vision?"
+        - "One thing that stands out is the power of creating a compelling narrative around our strategy. Stories resonate more deeply than mere data points. How do you think we can weave our strategy into a story that engages our stakeholders?"
+
+        3. **Explore Unconventional Approaches:**
+        - "Sometimes, the most effective strategies come from thinking outside the conventional framework. Instead of just following the data, we might consider the psychological aspects that drive customer decisions. What unique insights have you gathered from your interactions with customers?"
+        - "Innovation often stems from challenging the status quo. By looking at things differently, we can uncover opportunities that others might miss. How can we apply this kind of thinking to our current strategy?"
+
+        4. **Summarize and Invite Further Discussion:**
+        - "So, it seems like innovation, understanding customer behavior, and strategic storytelling are key areas for us. Does this resonate with your perspective?"
+        - "I'd love to hear any additional thoughts or questions you might have. What else should we consider as we move forward?"
+
+        Use this structure to keep the conversation natural and engaging, ensuring the client feels involved and informed throughout the discussion. Your language should be story-driven, reflecting key strategic insights to provide a unique and compelling perspective.
+
+        """
+
+        timeout = httpx.Timeout(120.0, connect=180.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(
+                'https://api.openai.com/v1/chat/completions',
+                json={
+                    "model": "gpt-4",
+                    "messages": [
+                        {"role": "system", "content": f"Writing Style: {writing_style} \n\n End of Instructions --------- Our Conversation so far: {fetched_talks}. Do not give irrelevant answers even if the contextual has irrelevant information. Use Sentence case for output. Start new paragraphs with ** and \n\n. Answer only to user question."},
+                        {"role": "user", "content": user_input}
+                    ]
+                },
+                headers={"Authorization": f"Bearer {api_key}"}
+            )
+            response.raise_for_status()
+            response_data = response.json()
+            
+            if 'choices' in response_data and response_data['choices']:
+                result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+                logger.info("Processed Orange Chat")
+                
+                # Attempt to save the chat, but continue if it fails
+                try:
+                    new_messages = [
+                        {'role': 'user', 'content': user_input},
+                        {'role': 'assistant', 'content': result}
+                    ]
+                    save_chat(industry, client, purpose, new_messages)
+                except Exception as e:
+                    logger.error(f"Failed to save chat: {e}")
+                
+                return result
+            else:
+                return "No Orange analysis generated"
+    except Exception as e:
+        logger.error(f"Unexpected error in Orange Chat: {e}")
+        traceback.print_exc()
+        return f"Unexpected Error: {str(e)}"

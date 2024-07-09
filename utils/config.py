@@ -2,6 +2,10 @@ import os
 from datetime import timedelta
 from pinecone import Pinecone, ServerlessSpec
 import openai
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Secret key for JWT encoding/decoding. In production, use a secure key and store it safely.
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")

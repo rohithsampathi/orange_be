@@ -1,14 +1,14 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat
 from utils.context import why_luxofy, why_1acre, why_montaigne
-from fastapi import BackgroundTasks
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
+from utils.database import save_chat
 import logging
 import sys
 
@@ -60,6 +60,12 @@ class EmailRequest(BaseModel):
     client: str
     target_industry: str
     additional_input: Optional[str] = None
+
+class StrategyRequest(BaseModel):
+    industry: str
+    purpose: str
+    client: str
+    user_input: str
 
 
 
@@ -235,6 +241,30 @@ async def generate_orange_strategy_endpoint(request: GeneralRequest, background_
     except Exception as e:
         print(f"Error generating reel: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+    
+@app.post("/api/generate_orange_strategy_chat")
+async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, current_user: User = Depends(get_current_user)):
+    try:
+        industry = request.industry
+        purpose = request.purpose
+        client = request.client
+        user_input = request.user_input
+
+        context = retrieve_and_generate_answer_3d(industry)
+        
+        response = await generate_orange_chat(industry, client, purpose, user_input, context)
+        
+        new_messages = [
+            {'role': 'user', 'content': user_input},
+            {'role': 'assistant', 'content': response}
+        ]
+        save_chat(industry, client, purpose, new_messages)
+        
+        return {"result": response}
+    except Exception as e:
+        logger.error(f"Error generating strategy chat: {e}")
+        return {"result": "An error occurred while generating the strategy chat. Please try again."}
 
 
 if __name__ == "__main__":
