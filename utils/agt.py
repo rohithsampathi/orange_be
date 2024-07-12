@@ -638,7 +638,7 @@ async def generate_orange_script(request, context, client):
                     "model": "gpt-4o-2024-05-13",
                     "messages": [
                         {"role": "system", "content": f"{writing_style}\n\nClient: {client}"},
-                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Craft the script as if it's a thought leadership piece, critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose."}
+                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Craft the script as if it's a thought leadership piece, critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention Books or narrators name in outputs. Strictly restrict the output to 30-40 seconds content"}
                     ]
                 },
                 headers={"Authorization": f"Bearer {api_key}"}
