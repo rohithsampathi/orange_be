@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script
 from utils.context import why_luxofy, why_1acre, why_montaigne
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 from utils.database import save_chat
@@ -67,7 +67,10 @@ class StrategyRequest(BaseModel):
     client: str
     user_input: str
 
-
+class ScriptRequest(BaseModel):
+    industry: str
+    purpose: str
+    client: str
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -251,9 +254,16 @@ async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, curre
         client = request.client
         user_input = request.user_input
 
+        if request.client == "Luxofy":
+            context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
+
         context = retrieve_and_generate_answer_3d(industry)
         
-        response = await generate_orange_chat(industry, client, purpose, user_input, context)
+        response = await generate_orange_chat(industry, context, purpose, user_input, context)
         
         new_messages = [
             {'role': 'user', 'content': user_input},
@@ -265,6 +275,35 @@ async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, curre
     except Exception as e:
         logger.error(f"Error generating strategy chat: {e}")
         return {"result": "An error occurred while generating the strategy chat. Please try again."}
+    
+
+@app.post("/api/generate_orange_script")
+async def generate_orange_script_endpoint(request: ScriptRequest, background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
+    try:
+        if request.client == "Luxofy":
+            context = why_luxofy
+        elif request.client == "1acre":
+            context = why_1acre
+        elif request.client == "Montaigne":
+            context = why_montaigne
+
+        indus = request.industry
+
+        industry = retrieve_and_generate_answer_3d(indus)
+        
+        # Cancel any existing tasks for this user
+        task_key = f"task_{current_user['username']}"
+        if hasattr(app.state, task_key):
+            existing_task = getattr(app.state, task_key)
+            if existing_task and hasattr(existing_task, 'cancel'):
+                existing_task.cancel()
+        
+        # Create a new task
+        result = await generate_orange_script(request, context, industry)
+        return {"result": result}
+    except Exception as e:
+        print(f"Error generating reel: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

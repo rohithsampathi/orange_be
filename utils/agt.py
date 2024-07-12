@@ -510,7 +510,7 @@ async def generate_orange_chat(industry, purpose, client, user_input, context):
             fetched_talks = ""  # Continue with empty chat history if fetching fails
     
         writing_style = f"""
-        As Orange Sampathi, the Chief Strategy Officer, you're engaging in a casual yet professional conversation with our client about the {industry} industry. You're leveraging the latest market developments and the client's specific needs to make complex information feel simple and engaging.
+        As Orange Sampathi, the Chief Strategy Officer at {client}. You're engaging in a deep brain storm conversation with your most promosing associate about the {industry} industry. You're leveraging the latest market developments below {context}, and doing the discussion to solve the below purpose {purpose}
 
         Begin the discussion by greeting the client warmly, setting a relaxed tone. Use the following approach to guide the conversation:
 
@@ -539,7 +539,7 @@ async def generate_orange_chat(industry, purpose, client, user_input, context):
             response = await client.post(
                 'https://api.openai.com/v1/chat/completions',
                 json={
-                    "model": "gpt-4",
+                    "model": "gpt-4o-2024-05-13",
                     "messages": [
                         {"role": "system", "content": f"Writing Style: {writing_style} \n\n End of Instructions --------- Our Conversation so far: {fetched_talks}. Do not give irrelevant answers even if the contextual has irrelevant information. Use Sentence case for output. Start new paragraphs with ** and \n\n. Answer only to user question."},
                         {"role": "user", "content": user_input}
@@ -571,3 +571,112 @@ async def generate_orange_chat(industry, purpose, client, user_input, context):
         logger.error(f"Unexpected error in Orange Chat: {e}")
         traceback.print_exc()
         return f"Unexpected Error: {str(e)}"
+    
+
+async def generate_orange_script(request, context, client):
+    purpose = request.purpose
+    
+    writing_style = f"""
+    User Inputs:
+
+    About our Company: {client}
+    Industry Developments: {context}
+    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like silicon valley
+    Purpose: {purpose}
+
+    Using the above inputs, create a 30-40 second video script for the specified company, focusing on the strategy or approach outlined in the Purpose, tailored for the given Industry.
+    Key requirements:
+
+    Incorporate insights from Rory Sutherland's "Alchemy," emphasizing:
+    Reframing problems and solutions
+    The importance of psychological value
+    How small changes can have disproportionate effects
+    The role of context and perception in decision-making
+    Balancing rationality and irrationality in markets
+
+
+    Draw subtle inspiration from other key works:
+    "The Innovators" by Walter Isaacson
+    "Chaos: The Amazing Science of the Unpredictable" by James Gleick
+    "The Black Swan" by Nassim Nicholas Taleb
+    "Zero to One" by Peter Thiel
+    "The Lean Startup" by Eric Ries
+    "Business Model Generation" by Alexander Osterwalder
+    "Cybernetics in Management" by F.H. George
+
+
+    Structure the script to:
+    Open with a thought-provoking question or scenario
+    Present a relatable problem
+    Introduce the strategy or approach as a solution
+    Provide concrete, slightly counterintuitive examples related to the strategy
+    Illustrate how the proposed strategy can dramatically change perceived value
+    Close with a strong, memorable message aligned with the stated purpose
+
+
+    Language and tone:
+    Use clear, jargon-free language appropriate for the target audience
+    Avoid clichéd or exaggerated terms
+    Balance rational and emotional appeals
+    Incorporate elements of surprise and intrigue to maintain interest
+
+
+    Content focus:
+    Emphasize reframing from conventional attributes to experiences and perceptions
+    Highlight the importance of understanding client motivations and stories
+    Showcase how the strategy can uncover hidden value
+
+
+    Overall impact:
+    The script should make companies rethink their current strategies
+    Present the strategy or approach as a nuanced, transformative tool for creating unique value
+    The message should be engaging, memorable, and aligned with Sutherland's principles of "Alchemy"
+
+
+    Remember to craft the script as if it's being viewed by potential clients and critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on marketing and strategy, tailored to achieve the stated purpose.
+
+    """
+    
+    print("Processing with Orange Script")
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    try:
+        timeout = httpx.Timeout(1500.0, connect=6000.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(
+                'https://api.openai.com/v1/chat/completions',
+                json={
+                    "model": "gpt-4o-2024-05-13",
+                    "messages": [
+                        {"role": "system", "content": f"{writing_style}\n\nClient: {client}"},
+                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Keep the script very narrative, human-like, simple yet, world class presentation"}
+                    ]
+                },
+                headers={"Authorization": f"Bearer {api_key}"}
+            )
+        # Check if the task has been cancelled
+            if asyncio.current_task().cancelled():
+                return "Task cancelled"
+        response_data = response.json()
+        print("API Response:", response_data)
+
+        if 'choices' in response_data and response_data['choices']:
+            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+            char_count_output = len(result)
+            char_count_input = 0
+            input_cost = char_count_input * 0.01 / 4000
+            output_cost = char_count_output * 0.03 / 4000
+            total_cost = input_cost + output_cost
+            cost_in_inr = total_cost * 86
+            print(f"Orange Script Input: {input_cost}, Orange Script Output: {output_cost}, Orange Script Total Cost: {total_cost}, Orange Script Cost in INR: {cost_in_inr} ")
+            return result
+        else:
+            print("No Script generated")
+            return "Failed to generate script"
+    except asyncio.CancelledError:
+        return "Task cancelled"
+    except Exception as e:
+        print(f"Unexpected error in Orange Script: {e}")
+        traceback.print_exc()
+        return f"Error generating content: {str(e)}"
+    
