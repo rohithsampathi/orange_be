@@ -586,7 +586,6 @@ async def generate_orange_script(request, context, client):
 
     Using the above inputs, create a 30-40 second video script for the specified company, focusing on the strategy or approach outlined in the Purpose, tailored for the given Industry.
     Key requirements:
-
     Incorporate insights from Rory Sutherland's "Alchemy," emphasizing:
     Reframing problems and solutions
     The importance of psychological value
@@ -605,35 +604,25 @@ async def generate_orange_script(request, context, client):
     "Cybernetics in Management" by F.H. George
 
 
-    Structure the script to:
-    Open with a thought-provoking question or scenario
-    Present a relatable problem
-    Introduce the strategy or approach as a solution
-    Provide concrete, slightly counterintuitive examples related to the strategy
-    Illustrate how the proposed strategy can dramatically change perceived value
-    Close with a strong, memorable message aligned with the stated purpose
+  Script structure:
+    Open with an intriguing industry-related question or scenario
+    Present a common industry challenge from a new angle
+    Subtly introduce the company's approach as a fresh perspective, not a direct solution
+    Provide one concrete, counterintuitive example that challenges conventional thinking
+    Close with a thought-provoking message that encourages rethinking industry norms
 
 
-    Language and tone:
-    Use clear, jargon-free language appropriate for the target audience
-    Avoid clichéd or exaggerated terms
-    Balance rational and emotional appeals
-    Incorporate elements of surprise and intrigue to maintain interest
-
-
-    Content focus:
-    Emphasize reframing from conventional attributes to experiences and perceptions
-    Highlight the importance of understanding client motivations and stories
-    Showcase how the strategy can uncover hidden value
+    Content and tone:
+    Use clear, jargon-free language with a conversational tone
+    Avoid direct promotion or mention of company services
+    Balance rational observations with emotional or surprising elements
+    Maintain an air of intrigue and discovery throughout
 
 
     Overall impact:
-    The script should make companies rethink their current strategies
-    Present the strategy or approach as a nuanced, transformative tool for creating unique value
-    The message should be engaging, memorable, and aligned with Sutherland's principles of "Alchemy"
-
-
-    Remember to craft the script as if it's being viewed by potential clients and critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on marketing and strategy, tailored to achieve the stated purpose.
+    The script should prompt the audience to question their current perspective
+    Present a fresh viewpoint that adds unique value to industry thinking
+    Ensure the message is engaging, memorable, and aligned with "Alchemy" principles
 
     """
     
@@ -649,7 +638,7 @@ async def generate_orange_script(request, context, client):
                     "model": "gpt-4o-2024-05-13",
                     "messages": [
                         {"role": "system", "content": f"{writing_style}\n\nClient: {client}"},
-                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Keep the script very narrative, human-like, simple yet, world class presentation"}
+                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Craft the script as if it's a thought leadership piece, critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose."}
                     ]
                 },
                 headers={"Authorization": f"Bearer {api_key}"}
