@@ -30,21 +30,10 @@ def parse_timestamp(ts):
     else:
         return None
 
-def retrieve_and_generate_answer_3d(query, filter_option='6m'):
+def retrieve_and_generate_answer_3d(query):
     current_date = datetime(2024, 3, 15)
-
-    if filter_option == 'all':
-        cutoff_date = datetime(1970, 1, 1)
-    elif filter_option == '30d':
-        cutoff_date = current_date - timedelta(days=30)
-    elif filter_option == '90d':
-        cutoff_date = current_date - timedelta(days=90)
-    elif filter_option == '6m':
-        cutoff_date = current_date - timedelta(days=180)
-    elif filter_option == '1y':
-        cutoff_date = current_date - timedelta(days=365)
-    else:
-        cutoff_date = current_date - timedelta(days=180)  # Default to 6 months
+    cutoff_date = current_date - timedelta(days=180)
+    
 
     cutoff_timestamp = cutoff_date.timestamp()
 
