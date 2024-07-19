@@ -18,32 +18,65 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
-def retrieve_and_generate_answer_3d(query, days_ago=60):
-    print("Generating New Context. Phew Seriously?")
+def parse_timestamp(ts):
+    if isinstance(ts, (int, float)):
+        return ts
+    elif isinstance(ts, str):
+        try:
+            dt = datetime.strptime(ts, "%d/%m/%Y %H:%M")
+            return dt.timestamp()
+        except ValueError:
+            return None
+    else:
+        return None
 
-    # Calculate UNIX epoch time for 'days_ago' days ago from now
-    cutoff_timestamp = datetime.now() - timedelta(days=days_ago)
-    cutoff_unix = int(time.mktime(cutoff_timestamp.timetuple()))
+def retrieve_and_generate_answer_3d(query, filter_option='6m'):
+    current_date = datetime(2024, 3, 15)
 
-    # Get query embedding
+    if filter_option == 'all':
+        cutoff_date = datetime(1970, 1, 1)
+    elif filter_option == '30d':
+        cutoff_date = current_date - timedelta(days=30)
+    elif filter_option == '90d':
+        cutoff_date = current_date - timedelta(days=90)
+    elif filter_option == '6m':
+        cutoff_date = current_date - timedelta(days=180)
+    elif filter_option == '1y':
+        cutoff_date = current_date - timedelta(days=365)
+    else:
+        cutoff_date = current_date - timedelta(days=180)  # Default to 6 months
+
+    cutoff_timestamp = cutoff_date.timestamp()
+
     xq = client.embeddings.create(input=[query], model="text-embedding-ada-002").data[0].embedding
+    
+    res_no_filter = index.query(vector=xq, top_k=10, include_metadata=True)
 
-    # Update the query call to use keyword arguments
-    res = index.query(
-        vector=xq,
-        filter={"timestamp": {"$gte": cutoff_unix}},
-        top_k=7,
-        include_metadata=True
-    )
+    filter_dict = {
+        "timestamp": {"$gte": cutoff_timestamp}
+    }
+    
+    res = index.query(vector=xq, top_k=7, include_metadata=True, filter=filter_dict)
+    
+    if len(res['matches']) == 0:
+        res = res_no_filter
 
     contexts = []
+    earliest_timestamp = float('inf')
+    latest_timestamp = float('-inf')
+    
     for match in res['matches']:
         if 'Analysis' in match['metadata']:
             contexts.append(match['metadata']['Analysis'])
         else:
             contexts.append("No Analysis Found")
-    print(contexts)
-    
+        
+        if 'timestamp' in match['metadata']:
+            ts = parse_timestamp(match['metadata']['timestamp'])
+            if ts:
+                earliest_timestamp = min(earliest_timestamp, ts)
+                latest_timestamp = max(latest_timestamp, ts)
+
     return contexts
 
 async def generate_orange_reel(request, context):
