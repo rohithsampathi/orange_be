@@ -8,6 +8,7 @@ from .config import client, index
 import time
 from utils.database import get_recent_chats, save_chat
 import logging
+from anthropic import Anthropic
 
 logger = logging.getLogger(__name__)
 
@@ -581,91 +582,74 @@ async def generate_orange_script(request, context, client):
 
     About our Company: {client}
     Industry Developments: {context}
-    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like silicon valley
+    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like Silicon Valley
     Purpose: {purpose}
 
     Using the above inputs, create a 30-40 second video script for the specified company, focusing on the strategy or approach outlined in the Purpose, tailored for the given Industry.
     Key requirements:
-    Incorporate insights from Rory Sutherland's "Alchemy," emphasizing:
-    Reframing problems and solutions
-    The importance of psychological value
-    How small changes can have disproportionate effects
-    The role of context and perception in decision-making
-    Balancing rationality and irrationality in markets
+    Incorporate insights from Montaigne's essays, emphasizing:
+    - Critical thinking and questioning assumptions
+    - The importance of personal experience and observation
+    - How cultural and societal norms shape our perceptions
+    - The role of skepticism in decision-making
+    - Balancing tradition and innovation in business
 
+    Draw subtle inspiration from key works in business and complexity theory:
+    - "The Innovators" by Walter Isaacson
+    - "Chaos: The Amazing Science of the Unpredictable" by James Gleick
+    - "The Black Swan" by Nassim Nicholas Taleb
+    - "Zero to One" by Peter Thiel
+    - "The Lean Startup" by Eric Ries
+    - "Business Model Generation" by Alexander Osterwalder
+    - "Cybernetics in Management" by F.H. George
 
-    Draw subtle inspiration from other key works:
-    "The Innovators" by Walter Isaacson
-    "Chaos: The Amazing Science of the Unpredictable" by James Gleick
-    "The Black Swan" by Nassim Nicholas Taleb
-    "Zero to One" by Peter Thiel
-    "The Lean Startup" by Eric Ries
-    "Business Model Generation" by Alexander Osterwalder
-    "Cybernetics in Management" by F.H. George
-
-
-  Script structure:
-    Open with an intriguing industry-related question or scenario
-    Present a common industry challenge from a new angle
-    Subtly introduce the company's approach as a fresh perspective, not a direct solution
-    Provide one concrete, counterintuitive example that challenges conventional thinking
-    Close with a thought-provoking message that encourages rethinking industry norms
-
+    Script structure:
+    - Open with a thought-provoking industry-related question or scenario
+    - Present a common industry challenge from an unexpected angle
+    - Introduce the company's approach as a fresh perspective, without directly promoting it
+    - Provide a concrete, counterintuitive example that challenges conventional thinking
+    - Close with an inspiring message that encourages rethinking industry norms
 
     Content and tone:
-    Use clear, jargon-free language with a conversational tone
-    Avoid direct promotion or mention of company services
-    Balance rational observations with emotional or surprising elements
-    Maintain an air of intrigue and discovery throughout
-
+    - Use clear, accessible language with a conversational yet professional tone
+    - Avoid direct promotion or mention of company services
+    - Balance analytical observations with surprising or emotionally resonant elements
+    - Maintain an air of intellectual curiosity and discovery throughout
 
     Overall impact:
-    The script should prompt the audience to question their current perspective
-    Present a fresh viewpoint that adds unique value to industry thinking
-    Ensure the message is engaging, memorable, and aligned with "Alchemy" principles
-
+    - The script should prompt the audience to question their current perspective
+    - Present a fresh viewpoint that adds unique value to industry thinking
+    - Ensure the message is engaging, memorable, and aligned with Montaigne's principles of critical thinking and personal observation
     """
     
-    print("Processing with Orange Script")
-    api_key = os.getenv("OPENAI_API_KEY")
+    print("Processing with Anthropic Script Generator")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
 
     try:
-        timeout = httpx.Timeout(1500.0, connect=6000.0)
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(
-                'https://api.openai.com/v1/chat/completions',
-                json={
-                    "model": "gpt-4o-2024-05-13",
-                    "messages": [
-                        {"role": "system", "content": f"{writing_style}\n\nClient: {client}"},
-                        {"role": "user", "content": f"Below is the user input \n Purpose: {purpose} \n About Our Company: {context}  \n Follow writing instructions strictly. Craft the script as if it's a thought leadership piece, critiqued by Rory Sutherland himself. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention Books or narrators name in outputs. Strictly restrict the output to 30 seconds content. Give the narration in a less dramatic, yet very thought provoking business tone."}
-                    ]
-                },
-                headers={"Authorization": f"Bearer {api_key}"}
-            )
-        # Check if the task has been cancelled
-            if asyncio.current_task().cancelled():
-                return "Task cancelled"
-        response_data = response.json()
-        print("API Response:", response_data)
+        anthropic = Anthropic(api_key=api_key)
+        
+        prompt = f"{writing_style}\n\nClient: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
 
-        if 'choices' in response_data and response_data['choices']:
-            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
-            char_count_output = len(result)
-            char_count_input = 0
-            input_cost = char_count_input * 0.01 / 4000
-            output_cost = char_count_output * 0.03 / 4000
-            total_cost = input_cost + output_cost
-            cost_in_inr = total_cost * 86
-            print(f"Orange Script Input: {input_cost}, Orange Script Output: {output_cost}, Orange Script Total Cost: {total_cost}, Orange Script Cost in INR: {cost_in_inr} ")
-            return result
-        else:
-            print("No Script generated")
-            return "Failed to generate script"
+        completion = anthropic.completions.create(
+            model="claude-3-opus-20240229",
+            max_tokens_to_sample=1000,
+            prompt=prompt
+        )
+
+        result = completion.completion.strip()
+        
+        char_count_output = len(result)
+        char_count_input = len(prompt)
+        input_cost = char_count_input * 0.015 / 1000  # Anthropic's pricing may differ, adjust as needed
+        output_cost = char_count_output * 0.015 / 1000
+        total_cost = input_cost + output_cost
+        cost_in_inr = total_cost * 86
+        print(f"Anthropic Script Input: {input_cost}, Anthropic Script Output: {output_cost}, Anthropic Script Total Cost: {total_cost}, Anthropic Script Cost in INR: {cost_in_inr}")
+        
+        return result
     except asyncio.CancelledError:
         return "Task cancelled"
     except Exception as e:
-        print(f"Unexpected error in Orange Script: {e}")
+        print(f"Unexpected error in Anthropic Script Generator: {e}")
         traceback.print_exc()
         return f"Error generating content: {str(e)}"
-    
