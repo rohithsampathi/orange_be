@@ -8,7 +8,9 @@ from .config import client, index
 import time
 from utils.database import get_recent_chats, save_chat
 import logging
-from anthropic import Anthropic
+import anthropic
+
+
 
 logger = logging.getLogger(__name__)
 
