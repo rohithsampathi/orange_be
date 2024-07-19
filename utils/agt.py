@@ -719,12 +719,11 @@ async def generate_orange_script_ai(request, context, client):
 
     Your script should be approximately 100-120 words long, suitable for a 30-40 second video.
 
-    After creating the script, generate 5-7 background stock video ideas that complement and enhance the narration. These ideas should be visually appealing, relevant to the script's content, and help illustrate the concepts discussed. Avoid generic or cliché visuals, and instead focus on unique and thought-provoking imagery that aligns with the script's innovative approach.
+    After creating the script, generate 5-7 background stock video ideas that complement and enhance the narration. These ideas should be visually appealing, relevant to the script's content, and help illustrate the concepts discussed. Avoid generic or cliché visuals, and instead focus on unique and thought-provoking imagery that aligns with the script's innovative approach. End the narrative with follow us for more.
 
     Present your final output in the following format:
 
     <output>
-    Video Script for [Purpose] and [Target Audience]:
     [Video Script]
 
     Background Video Ideas:
