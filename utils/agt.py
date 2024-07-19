@@ -701,6 +701,7 @@ async def generate_orange_script_ai(request, context, client):
 
     Present your final output in the following format:
 
+    <output>
     Video Script for [Purpose] and [Target Audience]:
     [Video Script]
 
@@ -711,9 +712,11 @@ async def generate_orange_script_ai(request, context, client):
     4. [Fourth video idea]
     5. [Fifth video idea]
     [Add more if necessary]
+    </output>
 
     Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience. The background video ideas should complement this approach and enhance the overall impact of the video.
-"""
+        
+    """
     print("Processing with Anthropic Script Generator")
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
