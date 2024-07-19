@@ -662,7 +662,7 @@ async def generate_orange_script_ai(request, context, client):
     purpose = request.purpose
     
     writing_style = f"""
-    You are tasked with creating a concise, thought-provoking video script for a company in a specific industry, along with background stock video ideas to enhance the narration. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
+    You are tasked with creating a concise, thought-provoking video script for a company in a specific industry, along with background stock video ideas. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
 
     Here are the key inputs for your script:
 
@@ -695,17 +695,13 @@ async def generate_orange_script_ai(request, context, client):
     - Montaigne's essays, emphasizing critical thinking, personal experience, cultural influences, skepticism, and balancing tradition with innovation
     - Key works in business and complexity theory, including "The Innovators," "Chaos: The Amazing Science of the Unpredictable," "The Black Swan," "Zero to One," "The Lean Startup," "Business Model Generation," and "Cybernetics in Management"
 
-    Ensure the script has the following overall impact:
-    - Prompts the audience to question their current perspective
-    - Presents a fresh viewpoint that adds unique value to industry thinking
-    - Is engaging, memorable, and aligned with principles of critical thinking and personal observation
-
     Your script should be approximately 100-120 words long, suitable for a 30-40 second video.
 
     After creating the script, generate 5-7 background stock video ideas that complement and enhance the narration. These ideas should be visually appealing, relevant to the script's content, and help illustrate the concepts discussed. Avoid generic or cliché visuals, and instead focus on unique and thought-provoking imagery that aligns with the script's innovative approach.
 
     Present your final output in the following format:
-    Video Script for the [Purpose] and [Targt Audience]:
+
+    Video Script for [Purpose] and [Target Audience]:
     [Video Script]
 
     Background Video Ideas:
@@ -717,7 +713,6 @@ async def generate_orange_script_ai(request, context, client):
     [Add more if necessary]
 
     Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience. The background video ideas should complement this approach and enhance the overall impact of the video.
-
 """
     print("Processing with Anthropic Script Generator")
     api_key = os.getenv("ANTHROPIC_API_KEY")
