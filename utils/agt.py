@@ -578,6 +578,88 @@ async def generate_orange_script(request, context, client):
     purpose = request.purpose
     
     writing_style = f"""
+    User Inputs:
+
+    About our Company: {client}
+    Industry Developments: {context}
+    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like Silicon Valley
+    Purpose: {purpose}
+
+    Using the above inputs, create a 30-40 second video script for the specified company, focusing on the strategy or approach outlined in the Purpose, tailored for the given Industry.
+    Key requirements:
+    Incorporate insights from Montaigne's essays, emphasizing:
+    - Critical thinking and questioning assumptions
+    - The importance of personal experience and observation
+    - How cultural and societal norms shape our perceptions
+    - The role of skepticism in decision-making
+    - Balancing tradition and innovation in business
+
+    Draw subtle inspiration from key works in business and complexity theory:
+    - "The Innovators" by Walter Isaacson
+    - "Chaos: The Amazing Science of the Unpredictable" by James Gleick
+    - "The Black Swan" by Nassim Nicholas Taleb
+    - "Zero to One" by Peter Thiel
+    - "The Lean Startup" by Eric Ries
+    - "Business Model Generation" by Alexander Osterwalder
+    - "Cybernetics in Management" by F.H. George
+
+    Script structure:
+    - Open with a thought-provoking industry-related question or scenario
+    - Present a common industry challenge from an unexpected angle
+    - Introduce the company's approach as a fresh perspective, without directly promoting it
+    - Provide a concrete, counterintuitive example that challenges conventional thinking
+    - Close with an inspiring message that encourages rethinking industry norms
+
+    Content and tone:
+    - Use clear, accessible language with a conversational yet professional tone
+    - Avoid direct promotion or mention of company services
+    - Balance analytical observations with surprising or emotionally resonant elements
+    - Maintain an air of intellectual curiosity and discovery throughout
+
+    Overall impact:
+    - The script should prompt the audience to question their current perspective
+    - Present a fresh viewpoint that adds unique value to industry thinking
+    - Ensure the message is engaging, memorable, and aligned with Montaigne's principles of critical thinking and personal observation
+    """
+    
+    print("Processing with Anthropic Script Generator")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+
+    try:
+        anthropic = Anthropic(api_key=api_key)
+        
+        prompt = f"{writing_style}\n\nClient: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
+
+        completion = anthropic.completions.create(
+            model="claude-3-opus-20240229",
+            max_tokens_to_sample=1000,
+            prompt=prompt
+        )
+
+        result = completion.completion.strip()
+        
+        char_count_output = len(result)
+        char_count_input = len(prompt)
+        input_cost = char_count_input * 0.015 / 1000  # Anthropic's pricing may differ, adjust as needed
+        output_cost = char_count_output * 0.015 / 1000
+        total_cost = input_cost + output_cost
+        cost_in_inr = total_cost * 86
+        print(f"Anthropic Script Input: {input_cost}, Anthropic Script Output: {output_cost}, Anthropic Script Total Cost: {total_cost}, Anthropic Script Cost in INR: {cost_in_inr}")
+        
+        return result
+    except asyncio.CancelledError:
+        return "Task cancelled"
+    except Exception as e:
+        print(f"Unexpected error in Anthropic Script Generator: {e}")
+        traceback.print_exc()
+        return f"Error generating content: {str(e)}"
+    
+
+
+async def generate_orange_script_ai(request, context, client):
+    purpose = request.purpose
+    
+    writing_style = f"""
     You are tasked with creating a concise, thought-provoking video script for a company in a specific industry. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
 
     Here are the key inputs for your script:
@@ -625,26 +707,36 @@ async def generate_orange_script(request, context, client):
     <word_count>[Insert word count here]</word_count>
 
     Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience.
-        """
+    """
 
     print("Processing with Anthropic Script Generator")
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
     try:
-        anthropic = Anthropic(api_key=api_key)
+        anthropic_client = anthropic.Anthropic(api_key=api_key)
         
-        prompt = f"{writing_style}\n\nClient: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
-
-        completion = anthropic.completions.create(
+        message = anthropic_client.messages.create(
             model="claude-3-opus-20240229",
-            max_tokens_to_sample=1000,
-            prompt=prompt
+            max_tokens=1000,
+            temperature=0,
+            system=writing_style,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"Client: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
+                        }
+                    ]
+                }
+            ]
         )
 
-        result = completion.completion.strip()
-        
+        result = message.content
+
         char_count_output = len(result)
-        char_count_input = len(prompt)
+        char_count_input = len(writing_style) + len(client) + len(purpose) + len(context)
         input_cost = char_count_input * 0.015 / 1000  # Anthropic's pricing may differ, adjust as needed
         output_cost = char_count_output * 0.015 / 1000
         total_cost = input_cost + output_cost
@@ -652,8 +744,6 @@ async def generate_orange_script(request, context, client):
         print(f"Anthropic Script Input: {input_cost}, Anthropic Script Output: {output_cost}, Anthropic Script Total Cost: {total_cost}, Anthropic Script Cost in INR: {cost_in_inr}")
         
         return result
-    except asyncio.CancelledError:
-        return "Task cancelled"
     except Exception as e:
         print(f"Unexpected error in Anthropic Script Generator: {e}")
         traceback.print_exc()

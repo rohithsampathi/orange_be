@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script, generate_orange_script_ai
 from utils.context import why_luxofy, why_1acre, why_montaigne
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 from utils.database import save_chat
@@ -299,7 +299,7 @@ async def generate_orange_script_endpoint(request: ScriptRequest, background_tas
                 existing_task.cancel()
         
         # Create a new task
-        result = await generate_orange_script(request, context, industry)
+        result = await generate_orange_script_ai(request, context, industry)
         return {"result": result}
     except Exception as e:
         print(f"Error generating reel: {e}")
