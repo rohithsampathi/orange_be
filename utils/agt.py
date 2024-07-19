@@ -578,50 +578,55 @@ async def generate_orange_script(request, context, client):
     purpose = request.purpose
     
     writing_style = f"""
-    User Inputs:
+    You are tasked with creating a concise, thought-provoking video script for a company in a specific industry. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
 
-    About our Company: {client}
-    Industry Developments: {context}
-    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like Silicon Valley
-    Purpose: {purpose}
+    Here are the key inputs for your script:
 
-    Using the above inputs, create a 30-40 second video script for the specified company, focusing on the strategy or approach outlined in the Purpose, tailored for the given Industry.
-    Key requirements:
-    Incorporate insights from Montaigne's essays, emphasizing:
-    - Critical thinking and questioning assumptions
-    - The importance of personal experience and observation
-    - How cultural and societal norms shape our perceptions
-    - The role of skepticism in decision-making
-    - Balancing tradition and innovation in business
+    <client>
+    {client}
+    </client>
 
-    Draw subtle inspiration from key works in business and complexity theory:
-    - "The Innovators" by Walter Isaacson
-    - "Chaos: The Amazing Science of the Unpredictable" by James Gleick
-    - "The Black Swan" by Nassim Nicholas Taleb
-    - "Zero to One" by Peter Thiel
-    - "The Lean Startup" by Eric Ries
-    - "Business Model Generation" by Alexander Osterwalder
-    - "Cybernetics in Management" by F.H. George
+    <context>
+    {context}
+    </context>
 
-    Script structure:
-    - Open with a thought-provoking industry-related question or scenario
-    - Present a common industry challenge from an unexpected angle
-    - Introduce the company's approach as a fresh perspective, without directly promoting it
-    - Provide a concrete, counterintuitive example that challenges conventional thinking
-    - Close with an inspiring message that encourages rethinking industry norms
+    <purpose>
+    {purpose}
+    </purpose>
 
-    Content and tone:
+    Follow this structure for your script:
+    1. Open with a thought-provoking industry-related question or scenario (2-3 sentences)
+    2. Present a common industry challenge from an unexpected angle (2-3 sentences)
+    3. Introduce the company's approach as a fresh perspective, without directly promoting it (2-3 sentences)
+    4. Provide a concrete, counterintuitive example that challenges conventional thinking (2-3 sentences)
+    5. Close with an inspiring message that encourages rethinking industry norms (1-2 sentences)
+
+    Content and tone requirements:
     - Use clear, accessible language with a conversational yet professional tone
     - Avoid direct promotion or mention of company services
     - Balance analytical observations with surprising or emotionally resonant elements
     - Maintain an air of intellectual curiosity and discovery throughout
 
-    Overall impact:
-    - The script should prompt the audience to question their current perspective
-    - Present a fresh viewpoint that adds unique value to industry thinking
-    - Ensure the message is engaging, memorable, and aligned with Montaigne's principles of critical thinking and personal observation
-    """
-    
+    Draw subtle inspiration from the following sources:
+    - Montaigne's essays, emphasizing critical thinking, personal experience, cultural influences, skepticism, and balancing tradition with innovation
+    - Key works in business and complexity theory, including "The Innovators," "Chaos: The Amazing Science of the Unpredictable," "The Black Swan," "Zero to One," "The Lean Startup," "Business Model Generation," and "Cybernetics in Management"
+
+    Ensure the script has the following overall impact:
+    - Prompts the audience to question their current perspective
+    - Presents a fresh viewpoint that adds unique value to industry thinking
+    - Is engaging, memorable, and aligned with principles of critical thinking and personal observation
+
+    Your script should be approximately 100-120 words long, suitable for a 30-40 second video.
+
+    Present your final output in the following format:
+    <script>
+    [Your video script here]
+    </script>
+    <word_count>[Insert word count here]</word_count>
+
+    Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience.
+        """
+
     print("Processing with Anthropic Script Generator")
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
