@@ -718,9 +718,9 @@ async def generate_orange_script_ai(request, context, client):
         anthropic_client = anthropic.Anthropic(api_key=api_key)
         
         message = anthropic_client.messages.create(
-            model="claude-3-opus-20240229",
+            model="claude-3-5-sonnet-20240620",
             max_tokens=1000,
-            temperature=0,
+            temperature=0.6,
             system=writing_style,
             messages=[
                 {
