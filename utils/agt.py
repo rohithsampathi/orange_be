@@ -662,7 +662,7 @@ async def generate_orange_script_ai(request, context, client):
     purpose = request.purpose
     
     writing_style = f"""
-    You are tasked with creating a concise, thought-provoking video script for a company in a specific industry. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
+    You are tasked with creating a concise, thought-provoking video script for a company in a specific industry, along with background stock video ideas to enhance the narration. The script should be engaging, intellectually stimulating, and tailored for business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
 
     Here are the key inputs for your script:
 
@@ -702,15 +702,23 @@ async def generate_orange_script_ai(request, context, client):
 
     Your script should be approximately 100-120 words long, suitable for a 30-40 second video.
 
+    After creating the script, generate 5-7 background stock video ideas that complement and enhance the narration. These ideas should be visually appealing, relevant to the script's content, and help illustrate the concepts discussed. Avoid generic or cliché visuals, and instead focus on unique and thought-provoking imagery that aligns with the script's innovative approach.
+
     Present your final output in the following format:
-    <script>
-    [Your video script here]
-    </script>
-    <word_count>[Insert word count here]</word_count>
+    Video Script for the [Purpose] and [Targt Audience]:
+    [Video Script]
 
-    Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience.
-    """
+    Background Video Ideas:
+    1. [First video idea]
+    2. [Second video idea]
+    3. [Third video idea]
+    4. [Fourth video idea]
+    5. [Fifth video idea]
+    [Add more if necessary]
 
+    Remember to create a script that is classy, minimal, and smooth, while incorporating subtle immersive and conversational elements that create a sense of FOMO (fear of missing out) for the target audience. The background video ideas should complement this approach and enhance the overall impact of the video.
+
+"""
     print("Processing with Anthropic Script Generator")
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
