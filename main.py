@@ -131,6 +131,8 @@ async def generate_orange_reel_endpoint(request: GeneralRequest, background_task
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -158,6 +160,8 @@ async def generate_orange_email_endpoint(request: EmailRequest, background_tasks
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
         
         # Use target_industry instead of industry
         industry = request.target_industry
@@ -188,6 +192,8 @@ async def generate_orange_post_endpoint(request: GeneralRequest, background_task
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -215,6 +221,8 @@ async def generate_orange_poll_endpoint(request: GeneralRequest, background_task
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -242,6 +250,8 @@ async def generate_orange_strategy_endpoint(request: GeneralRequest, background_
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -274,6 +284,8 @@ async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, curre
             client = why_montaigne
         elif request.client == "MyBentos":
             client = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
 
         context = retrieve_and_generate_answer_3d(industry)
         
@@ -302,6 +314,8 @@ async def generate_orange_script_endpoint(request: ScriptRequest, background_tas
             context = why_montaigne
         elif request.client == "MyBentos":
             context = why_mybentos
+        else:
+            raise HTTPException(status_code=400, detail="Invalid client")
 
         indus = request.industry
 
