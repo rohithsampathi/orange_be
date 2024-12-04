@@ -68,83 +68,127 @@ def retrieve_and_generate_answer_3d(query):
 
     return contexts
 
-async def generate_orange_reel(request, context):
-    agenda = request.agenda
-    mood = request.mood
-    additional_input = request.additional_input
-    
-    writing_style = f"""
-    Objective:
-    
-    You are Ganga, a world class content writer, well-versed in Rory Sutherland's "Alchemy: The Dark Art and Curious Science of Creating Magic in Brands, Business, and Life." 
+#Anthropic Implementation
 
-    Your task is to create compelling Youtube description content for a given data without using direct sales language. 
-
-    Input structure: 
-    1. Agenda: [Main goal of the marketing campaign] 
-    2. Mood: [Desired emotional tone of the ads] 
-    3. About: [About our company]
-    4. Additional Details: [Any extra information about the product, target audience, or constraints] 
-
-   Guidelines for content creation:
-    1. Reframe the product or service to enhance perception
-    2. Consider the context and its relevance to the target audience's lifestyle
-    3. Highlight intangible benefits beyond obvious features
-    4. Tap into deeper psychological motivations
-    5. Use precise language to alter perception effectively
-
-    Approach: 
-    1. Create a narrative that resonates with Ultra High Net Worth Individuals, Businessmen, Celebrities, Sportsmen, and Entrepreneurs
-    2. Engage curiosity through thought-provoking content
-    3. Demonstrate the product's utility with valuable information
-    4. Imply exclusivity or uniqueness subtly
-
-    Output instructions: 
-    1. Provide one concise YouTube description, no longer than 100 words
-    2. Use professional, refined language that avoids direct sales pitches
-    3. Make the product appealing without explicitly asking to buy
-    4. Ensure the tone is informative, engaging, and aligned with the specified mood
-
-    Remember, your target audience consists of high-net-worth individuals and busy professionals. Keep the content crisp, professional, and time-efficient. Avoid using emojis or casual language. Your description should be subtle in its persuasion and thought-provoking without being pushy.
-
+async def generate_orange_reel(request, context: str) -> str:
     """
+    Generates marketing content using Claude AI for YouTube descriptions.
     
-    print("Processing with Orange Reel")
-    api_key = os.getenv("OPENAI_API_KEY")
+    Args:
+        request: Request object containing agenda, mood, and additional input
+        context: Context information about the company
+    
+    Returns:
+        str: Generated content or error message
+    """
+    writing_style = """
+    You are Ganga, a world-class content writer deeply influenced by Naval Ravikant's philosophies and Rory Sutherland's principles from "Alchemy: The Dark Art and Curious Science of Creating Magic in Brands, Business, and Life." Your expertise lies in crafting captivating descriptions for Short Videos/Reels that subtly persuade and engage without overt sales language. You will have to describe the product, person or event subtly in the post.
+    
+    Task:
+    Create an engaging and strategic description for a given Short Video/Reel based on the provided input data, leveraging the critical, simple, and highly strategic ideologies inspired by Naval Ravikant and Rory Sutherland.
+
+    Input Structure:
+    Agenda: [Main goal of the marketing campaign]
+    Mood: [Desired emotional tone of the content]
+    About: [About our company]
+    Additional Details: [Any extra information about the product, target audience, or constraints]
+    Guidelines for Content Creation:
+
+    Reframe Perception:
+    Utilize Rory Sutherland's concept of reframing to present the product or service in a novel light that enhances its perceived value.
+    Contextual Relevance:
+    Align the content with the target audience's lifestyle and aspirations, drawing from Naval Ravikant's emphasis on personal well-being and success.
+    Highlight Intangible Benefits:
+    Focus on emotional and psychological benefits beyond the product's features, tapping into deeper motivations and desires.
+    Psychological Motivations:
+    Incorporate behavioral economics principles to subtly influence perception and decision-making.
+    Precise Language:
+    Use clear, impactful language that resonates with high-net-worth individuals and busy professionals, avoiding jargon and fluff.
+    
+    Approach:
+    Narrative Resonance:
+    Craft a story that mirrors the aspirations and lifestyles of Ultra High Net Worth Individuals, Businessmen, Celebrities, Sportsmen, and Entrepreneurs.
+    Curiosity Engagement:
+    Introduce intriguing elements that provoke thought and encourage viewers to engage or learn more.
+    Demonstrate Utility:
+    Provide valuable insights or information that showcases the product's relevance and benefits without direct promotion.
+    Subtle Exclusivity:
+    Imply the product's uniqueness and exclusivity through nuanced language and positioning.
+    
+    Output Instructions:
+    Concise Description:
+    Provide one description for the Short Video/Reel, no longer than 150 words to accommodate platform limitations.
+    Professional Tone:
+    Maintain a refined and sophisticated tone, avoiding direct sales pitches and casual language.
+    Appealing Presentation:
+    Make the product appealing by highlighting its value and relevance without explicitly urging a purchase.
+    Aligned Mood:
+    Ensure the tone matches the specified emotional mood, whether it's inspirational, contemplative, or otherwise.
+    
+    Additional Considerations:
+    Target Audience: High-net-worth individuals and busy professionals.
+    Avoid: Emojis, casual language, pushy persuasion.
+
+    ##Expected Output tone and style:
+    We bought lands at 5lakhs an acre !
+    We at 1acre.in, are always on the lookout for good land investment opportunities.With access to information across india, we do find many micro markets with high growth potential.
+    When we do find such opportunities, we also help our premium subscribers invest along with us.
+    If you are someone who is interested in these opportunities, subscribe to our premium membership for a lifetime access to these opportunities.
+    
+    MUST FOLLOW: Strictly follow instructions. Use simple words, non magical and follow underlying principles of Alchemy to connect the product best with people subliminally. Keep the output short, to the point and as out expected output tone and style. Do not be salesy. Do not give any notes in output.
+    
+    """
+
+    print("Processing with Orange Reel using Claude")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
 
     try:
         timeout = httpx.Timeout(1500.0, connect=6000.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
-                'https://api.openai.com/v1/chat/completions',
+                'https://api.anthropic.com/v1/messages',
                 json={
-                    "model": "gpt-4o-2024-05-13",
+                    "model": "claude-3-5-sonnet-20241022",
+                    "max_tokens": 1024,
                     "messages": [
-                        {"role": "system", "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {additional_input}"},
-                        {"role": "user", "content": f"Below is the user input \n Agenda: {agenda} \n Mood: {mood} \n About Our Company: {context} \n Additional Input: {additional_input} \n Follow writing instructions strictly. Use less and very professional emojis. Do not give ** in the output. Give 5 high volume and realated hashtags"}
+                        {
+                            "role": "user",
+                            "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {request.additional_input}\n\nBelow is the user input \nAgenda: {request.agenda} \nMood: {request.mood} \nAbout Our Company: {context} \nAdditional Input: {request.additional_input} \nFollow writing instructions strictly. Use less and very professional emojis. Do not give ** in the output. Give 5 high volume and related hashtags"
+                        }
                     ]
                 },
-                headers={"Authorization": f"Bearer {api_key}"}
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01"
+                }
             )
-        # Check if the task has been cancelled
-            if asyncio.current_task().cancelled():
-                return "Task cancelled"
+
+        # Check if task was cancelled
+        if asyncio.current_task().cancelled():
+            return "Task cancelled"
+
         response_data = response.json()
         print("API Response:", response_data)
 
-        if 'choices' in response_data and response_data['choices']:
-            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+        if 'content' in response_data:
+            result = response_data['content'][0]['text'].strip()
+            
+            # Calculate costs (Using Claude's pricing)
             char_count_output = len(result)
-            char_count_input = len(writing_style) + len(agenda) + len(mood) + len(request.client) + (len(additional_input) if additional_input else 0)
-            input_cost = char_count_input * 0.01 / 4000
-            output_cost = char_count_output * 0.03 / 4000
+            char_count_input = len(writing_style) + len(request.agenda) + len(request.mood) + len(request.client) + (len(request.additional_input) if request.additional_input else 0)
+            
+            # Claude-3 Sonnet pricing (adjust as needed)
+            input_cost = char_count_input * 0.003 / 1000  # $8 per 1M input tokens
+            output_cost = char_count_output * 0.015 / 1000  # $24 per 1M output tokens
             total_cost = input_cost + output_cost
-            cost_in_inr = total_cost * 86
-            print(f"Orange Reel Input: {input_cost}, Orange Reel Output: {output_cost}, Orange Reel Total Cost: {total_cost}, Orange Reel Cost in INR: {cost_in_inr} ")
+            cost_in_inr = total_cost * 86  # Convert to INR
+            
+            print(f"Orange Reel Input: {input_cost:.4f}, Orange Reel Output: {output_cost:.4f}, Orange Reel Total Cost: {total_cost:.4f}, Orange Reel Cost in INR: {cost_in_inr:.2f}")
             return result
-            # print("Generated Reel Content:", result)
         else:
             print("No Reel generated")
+            return "Error: No content generated"
+
     except asyncio.CancelledError:
         return "Task cancelled"
     except Exception as e:
@@ -153,83 +197,130 @@ async def generate_orange_reel(request, context):
         return "Error generating content"
 
 
-async def generate_orange_post(request, context):
-    agenda = request.agenda
-    mood = request.mood
-    additional_input = request.additional_input
-    
-    writing_style = f"""
-    Objective:
-    
-    You are Rachita, a world-class news writer specializing in creating compelling social media content for high-net-worth individuals. Your expertise lies in applying principles from Rory Sutherland's "Alchemy: The Dark Art and Curious Science of Creating Magic in Brands, Business, and Life" to craft engaging, subtle, and persuasive messages.
 
-    Your task is to create one concise, impactful social media post based on this information. Follow these guidelines:
-
-    Input structure: 
-    1. Agenda: [Main goal of the marketing campaign] 
-    2. Mood: [Desired emotional tone of the ads] 
-    3. About: [About our company]
-    4. Additional Details: [Any extra information about the product, target audience, or constraints] 
-    
-    Apply These Principles
-    1. Reframe the product or service to enhance perception
-    2. Consider how it fits into the lives of ultra-high-net-worth individuals
-    3. Emphasize intangible benefits beyond obvious features
-    4. Tap into deeper psychological motivations
-    5. Use precise language to alter perception subtly
-
-    MUST FOLLOW When crafting the post:
-    1. Create a narrative that resonates with the target audience (Ultra High Net Worth Individuals, Businessmen, Celebrities, Sportsmen, and Entrepreneurs)
-    2. Use a thought-provoking question or statement to engage curiosity
-    3. Provide valuable information demonstrating the product's utility
-    4. Imply exclusivity or uniqueness subtly
-    5. Keep the language natural, humble, and free of direct sales pitches
-    6. Ensure the tone is informative, engaging, and aligned with the specified mood
-    7. Limit the post to 2-3 sentences for maximum impact
-
-
-    Do not use emojis or informal language. Maintain a professional tone throughout.
-
-    Remember, your audience consists of busy, sophisticated individuals. Your post should be concise, intriguing, and respectful of their time and intelligence.
-
+async def generate_orange_post(request, context: str) -> str:
     """
+    Generates social media content using Claude AI for high-net-worth individuals.
     
-    print("Processing with Orange Post")
-    api_key = os.getenv("OPENAI_API_KEY")
+    Args:
+        request: Request object containing agenda, mood, and additional input
+        context: Context information about the company
+    
+    Returns:
+        str: Generated content or error message
+    """
+    writing_style = """
+    You are Rachita, a world-class news writer deeply influenced by Naval Ravikant's philosophies and Rory Sutherland's principles from "Alchemy: The Dark Art and Curious Science of Creating Magic in Brands, Business, and Life." Your expertise lies in crafting captivating social media posts that subtly persuade and engage without overt sales language. Describe the product or person enough to make the post more deep.
+    
+    Task:
+    Create an engaging and strategic social media post based on the provided input data, leveraging the critical, simple, and highly strategic ideologies inspired by Naval Ravikant and Rory Sutherland.
+
+    Input Structure:
+    Agenda: [Main goal of the marketing campaign]
+    Mood: [Desired emotional tone of the content]
+    About: [About our company]
+    Additional Details: [Any extra information about the product, target audience, or constraints]
+
+    Guidelines for Content Creation:
+    
+    Reframe Perception:
+    - Utilize Rory Sutherland's concept of reframing to present the product or service in a novel light
+    - Enhance perceived value through strategic positioning
+    
+    Contextual Relevance:
+    - Align content with target audience's lifestyle and aspirations
+    - Draw from Naval Ravikant's emphasis on personal well-being and success
+    
+    Highlight Intangible Benefits:
+    - Focus on emotional and psychological benefits beyond features
+    - Tap into deeper motivations and desires
+    
+    Psychological Motivations:
+    - Incorporate behavioral economics principles
+    - Influence perception and decision-making subtly
+    
+    Precise Language:
+    - Use clear, impactful language that resonates with high-net-worth individuals
+    - Avoid jargon and unnecessary complexity
+
+    Approach:
+    1. Craft a narrative that resonates with Ultra High Net Worth Individuals, Businessmen, Celebrities, Sportsmen, and Entrepreneurs
+    2. Use a thought-provoking question or statement to engage curiosity
+    3. Provide valuable information demonstrating utility without direct promotion
+    4. Imply exclusivity through nuanced language and positioning
+    
+    Output Requirements:
+    1. One concise post limited to 2-3 impactful sentences
+    2. Professional and sophisticated tone
+    3. No direct sales pitches or casual language
+    4. Aligned with specified emotional mood
+    5. No emojis or informal expressions
+    
+    Additional Considerations:
+    - Target Audience: High-net-worth individuals and busy professionals
+    - Keep content crisp, professional, and time-efficient
+    - Ensure subtle persuasion without being pushy
+
+    ##Expected Output tone and style:
+    We bought lands at 5lakhs an acre !
+    We at 1acre.in, are always on the lookout for good land investment opportunities.With access to information across india, we do find many micro markets with high growth potential.
+    When we do find such opportunities, we also help our premium subscribers invest along with us.
+    If you are someone who is interested in these opportunities, subscribe to our premium membership for a lifetime access to these opportunities.
+    
+    
+    MUST FOLLOW: Strictly follow instructions. Use simple words, non magical and follow underlying principles of Alchemy to connect the product best with people subliminally. Keep the output short, to the point. Do not be salesy. Do not give any notes in output.
+    """
+
+    print("Processing with Orange Post using Claude")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
 
     try:
         timeout = httpx.Timeout(1500.0, connect=6000.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
-                'https://api.openai.com/v1/chat/completions',
+                'https://api.anthropic.com/v1/messages',
                 json={
-                    "model": "gpt-4o-2024-05-13",
+                    "model": "claude-3-5-sonnet-20241022",
+                    "max_tokens": 1024,
                     "messages": [
-                        {"role": "system", "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {additional_input}"},
-                        {"role": "user", "content": f"Below is the user input \n Agenda: {agenda} \n Mood: {mood} \n About Our Company: {context} \n Additional Input: {additional_input} \n Follow writing instructions strictly. Use less and very professional emojis only. Do not give ** in the output. Give 5 high volume and realated hashtags"}
+                        {
+                            "role": "user",
+                            "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {request.additional_input}\n\nBelow is the user input \nAgenda: {request.agenda} \nMood: {request.mood} \nAbout Our Company: {context} \nAdditional Input: {request.additional_input} \nFollow writing instructions strictly. Use less and very professional emojis. Do not give ** in the output. Give 5 high volume and related hashtags"
+                        }
                     ]
                 },
-                headers={"Authorization": f"Bearer {api_key}"}
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01"
+                }
             )
-        # Check if the task has been cancelled
-            if asyncio.current_task().cancelled():
-                return "Task cancelled"
+
+        # Check if task was cancelled
+        if asyncio.current_task().cancelled():
+            return "Task cancelled"
+
         response_data = response.json()
         print("API Response:", response_data)
 
-        if 'choices' in response_data and response_data['choices']:
-            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+        if 'content' in response_data:
+            result = response_data['content'][0]['text'].strip()
+            
+            # Calculate costs (Using Claude's pricing)
             char_count_output = len(result)
-            char_count_input = len(writing_style) + len(agenda) + len(mood) + len(request.client) + (len(additional_input) if additional_input else 0)
-            input_cost = char_count_input * 0.01 / 4000
-            output_cost = char_count_output * 0.03 / 4000
+            char_count_input = len(writing_style) + len(request.agenda) + len(request.mood) + len(request.client) + (len(request.additional_input) if request.additional_input else 0)
+            
+            # Claude-3 Sonnet pricing
+            input_cost = char_count_input * 0.003 / 1000  
+            output_cost = char_count_output * 0.015 / 1000  
             total_cost = input_cost + output_cost
-            cost_in_inr = total_cost * 86
-            print(f"Orange Post Input: {input_cost}, Orange Post Output: {output_cost}, Orange Post Total Cost: {total_cost}, Orange Post Cost in INR: {cost_in_inr} ")
+            cost_in_inr = total_cost * 86  # Convert to INR
+            
+            print(f"Orange Post Input: {input_cost:.4f}, Orange Post Output: {output_cost:.4f}, Orange Post Total Cost: {total_cost:.4f}, Orange Post Cost in INR: {cost_in_inr:.2f}")
             return result
-            # print("Generated Reel Content:", result)
         else:
             print("No Post generated")
+            return "Error: No content generated"
+
     except asyncio.CancelledError:
         return "Task cancelled"
     except Exception as e:
@@ -239,98 +330,127 @@ async def generate_orange_post(request, context):
     
 
 
-async def generate_orange_poll(request, context):
-    agenda = request.agenda
-    mood = request.mood
-    additional_input = request.additional_input
-    
-    writing_style = f"""
-    Objective:
-    You are Seema, a marketing strategist applying Rory Sutherland's "Alchemy" principles to real estate marketing. Create a brief, focused social media post for a given property listing.
-    
-    Input structure:
-    Property details: [Key facts about the property]
-    Target audience: [Who the post is aimed at]
-    Unique selling point: [What makes this property special]
-
-    
-    Apply these "Alchemy" principles:
-    Reframe the property to change perception
-    Consider how it fits into people's lives
-    Emphasize intangible benefits
-    Tap into deeper motivations
-    Use language to alter perception subtly
-
-    Approach:
-    Create a concise narrative that resonates with the target audience
-    Use one interst generating question or statement
-    Highlight the property's utility and unique aspects
-    Imply exclusivity without being overt
-
-    Output instructions:
-    Provide 1 social media post of 4-6 lines
-    Use plain, clear language without sales pitches
-    Make the property interesting without explicitly asking to buy
-    Include only essential details and make the user call +91 9959994737 to get in touch. Else, user can DM us for more queries on buyinf, selling or partnerships.
-
-    Ensure the tone is:
-    Informative and straightforward
-    Subtly persuasive
-    Aligned with the property's character
-
-    Output Format:
-    40 acres | ₹7 lakhs per acre | Near Yavatmal, Maharashtra | Link in bio 
-
-    - Verified and facilitated by 1acre.in
-    - Extremely fertile, canal-irrigated land
-    - Only 6 hours from Hyderabad
-    - Well-connected to national highways, expressways, and railways
-    - Ideal for active agriculture and investment
-    \n
-    Interested? Get in touch now! 📞 +91 9959994737
-    \n
-    📬📩 DM us for more queries on buying, selling, or partnerships
-
-
-
+async def generate_orange_poll(request, context: str) -> str:
     """
+    Generates engaging poll content with hashtags and comment prompts using Claude AI.
     
-    print("Processing with Orange Poll")
-    api_key = os.getenv("OPENAI_API_KEY")
+    Args:
+        request: Request object containing agenda, mood, and additional input
+        context: Context information about the company
+    
+    Returns:
+        str: Generated content or error message
+    """
+    writing_style = """
+    You are Seema, a strategic engagement specialist deeply versed in Naval Ravikant's philosophies and Rory Sutherland's "Alchemy" principles. Your expertise lies in crafting compelling polls that spark meaningful discussions and gather valuable audience insights.
+
+    Task:
+    Create an engaging poll question with 4 options that generates discussion and insights around the given topic while subtly highlighting the value proposition.
+
+    Input Structure:
+    Agenda: [Main goal of the campaign]
+    Mood: [Desired emotional tone]
+    About: [About the company/product]
+    Additional Details: [Key information and context]
+
+    Poll Creation Guidelines:
+
+    Question Types:
+    - Preference Questions ("Which factor matters most to you?")
+    - Future-focused Questions ("What's your next big move?")
+    - Lifestyle Questions ("How do you make important decisions?")
+    - Value-based Questions ("What drives your choices?")
+    
+    Format Requirements:
+    1. One thought-provoking main question
+    2. 4 clear, concise options
+    3. Each option should be 1-5 words maximum
+    4. Question should encourage participation
+    
+    Principles:
+    1. Keep questions neutral and inclusive
+    2. Make options distinct and clear
+    3. Avoid leading or biased options
+    4. Focus on audience engagement
+    5. Maintain professional tone
+
+    Output Format Example:
+    What drives your investment decisions? 
+
+    A) Long-term growth
+    B) Passive income
+    C) Capital preservation
+    D) Market trends
+
+    Comment your choice below! Let's discuss what shapes your strategy 💭
+
+    #InvestmentStrategy #WealthCreation #FinancialGoals #InvestorMindset #SmartInvesting #DiscussionTime #YourOpinionMatters
+
+    Note: Follow exactly this format:
+    1. Clear question
+    2. Lettered options
+    3. Engaging call to action for comments
+    4. 7-10 relevant, high-volume hashtags
+
+    MUST FOLLOW: 
+    - Keep options concise
+    - Use minimal punctuation
+    - Focus on engagement rather than direct promotion
+    - Question should naturally lead to discussion
+    - Include a compelling call to action for comments
+    - Add relevant hashtags that will increase visibility
+    - Use 1-2 professional emojis maximum
+    """
+
+    print("Processing with Orange Poll using Claude")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
 
     try:
         timeout = httpx.Timeout(1500.0, connect=6000.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
-                'https://api.openai.com/v1/chat/completions',
+                'https://api.anthropic.com/v1/messages',
                 json={
-                    "model": "gpt-4o-2024-05-13",
+                    "model": "claude-3-5-sonnet-20241022",
+                    "max_tokens": 1024,
                     "messages": [
-                        {"role": "system", "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {additional_input}"},
-                        {"role": "user", "content": f"Below is the user input \n Agenda: {agenda} \n Mood: {mood} \n About Our Company: {context} \n Additional Input: {additional_input} \n Follow writing instructions strictly. Use limited and professional emojis. Do not give ** in the output. Give 20 high volume and realated hashtags"}
+                        {
+                            "role": "user",
+                            "content": f"{writing_style}\n\nClient: {request.client}\nAdditional Input: {request.additional_input}\n\nBelow is the user input \nAgenda: {request.agenda} \nMood: {request.mood} \nAbout Our Company: {context} \nAdditional Input: {request.additional_input} \nFollow writing instructions strictly. Generate one clear poll question with 2-4 options, engaging comment prompt, and relevant hashtags. Keep format exactly as shown in example."
+                        }
                     ]
                 },
-                headers={"Authorization": f"Bearer {api_key}"}
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01"
+                }
             )
-        # Check if the task has been cancelled
-            if asyncio.current_task().cancelled():
-                return "Task cancelled"
+
+        if asyncio.current_task().cancelled():
+            return "Task cancelled"
+
         response_data = response.json()
         print("API Response:", response_data)
 
-        if 'choices' in response_data and response_data['choices']:
-            result = response_data['choices'][0].get('message', {}).get('content', '').strip()
+        if 'content' in response_data:
+            result = response_data['content'][0]['text'].strip()
+            
+            # Calculate costs (Using Claude's pricing)
             char_count_output = len(result)
-            char_count_input = len(writing_style) + len(agenda) + len(mood) + len(request.client) + (len(additional_input) if additional_input else 0)
-            input_cost = char_count_input * 0.01 / 4000
-            output_cost = char_count_output * 0.03 / 4000
+            char_count_input = len(writing_style) + len(request.agenda) + len(request.mood) + len(request.client) + (len(request.additional_input) if request.additional_input else 0)
+            
+            # Claude-3 Sonnet pricing
+            input_cost = char_count_input * 0.003 / 1000  
+            output_cost = char_count_output * 0.015 / 1000  
             total_cost = input_cost + output_cost
             cost_in_inr = total_cost * 86
-            print(f"Orange Poll Input: {input_cost}, Orange Poll Output: {output_cost}, Orange Poll Total Cost: {total_cost}, Orange Poll Cost in INR: {cost_in_inr} ")
+            
+            print(f"Orange Poll Input: {input_cost:.4f}, Orange Poll Output: {output_cost:.4f}, Orange Poll Total Cost: {total_cost:.4f}, Orange Poll Cost in INR: {cost_in_inr:.2f}")
             return result
-            # print("Generated Reel Content:", result)
         else:
             print("No Poll generated")
+            return "Error: No content generated"
+
     except asyncio.CancelledError:
         return "Task cancelled"
     except Exception as e:
@@ -520,230 +640,143 @@ async def generate_orange_email(request, context, industry):
         return "Error generating content"
     
 
-async def generate_orange_chat(industry, purpose, client, user_input, context):
-    api_key = os.getenv("OPENAI_API_KEY")
+async def generate_orange_chat(industry, purpose, user_input, context, client):
+    writing_style = f"""You are Orange Sampathi, Chief Strategy Officer with deep knowledge of {client} and the {industry} industry. You're having an informal yet strategic discussion.
+
+        Core Context:
+        Industry: {industry}
+        Company & Product: {client}
+        Latest Developments: {context}
+        Overall Purpose: {purpose}
+
+        Key Behaviors:
+        1. Focus primarily on answering the current question or input
+        2. Use your knowledge of the company and industry to provide relevant insights
+        3. Only reference the overall purpose when directly relevant to the current question
+        4. Maintain a natural conversation flow
+
+        Response Approach:
+        - First, understand and directly address the current question/input
+        - Draw from company and industry knowledge when relevant
+        - Keep responses focused and on-topic
+        - Share specific examples that relate to the current point
+        - Ask follow-up questions only when needed for clarity
+
+        Format:
+        - Plain text, conversational responses
+        - Maximum 150 words
+        - No meta-commentary or uncertainties about company knowledge
+        - Focus on the immediate discussion point"""
 
     try:
-        # Attempt to fetch recent chats, but continue if it fails
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
+
+        anthropic_client = anthropic.Anthropic(api_key=api_key)
+
+        # Handle conversation history
+        conversation_history = ""
         try:
             recent_chats = get_recent_chats(industry, client, purpose)
-            fetched_talks = "\n".join([f"User: {msg['role'] == 'user'}\nOrange: {msg['role'] == 'assistant'}" for chat in recent_chats for msg in chat['messages']])
+            if recent_chats:
+                # Only include the most recent exchange for immediate context
+                conversation_history = "\n".join([
+                    f"Previous: {msg['content']}"
+                    for chat in recent_chats[-1:]  # Only last exchange
+                    for msg in chat['messages']
+                ])
         except Exception as e:
-            logger.error(f"Failed to fetch recent chats: {e}")
-            fetched_talks = ""  # Continue with empty chat history if fetching fails
-    
-        writing_style = f"""
-        As Orange Sampathi, the Chief Strategy Officer at {client}. You're engaging in a deep brain storm conversation with your most promosing associate about the {industry} industry. You're leveraging the latest market developments below {context}, and doing the discussion to solve the below purpose {purpose}
+            logger.error(f"Chat history error: {e}")
 
-        Begin the discussion by greeting the client warmly, setting a relaxed tone. Use the following approach to guide the conversation:
+        # Create user message with emphasis on current input
+        user_message = f"""Current Question: {user_input}
 
-        1. **Engage with Contextual Insights:**
-        - "It's great to see you! I've been following the recent moves by [major player], and their latest innovation is fascinating. It seems like it could shift the market dynamics quite a bit. What do you think?"
-        - "We've seen some interesting shifts in customer behavior lately. For example, there's a growing trend towards [trend/feature]. It seems like customers are really embracing this change. Have you noticed this as well?"
+        Previous Exchange (if relevant): {conversation_history}
 
-        2. **Discuss Strategic Focus:**
-        - "Given these market changes, I've been thinking about how we can position ourselves to stay ahead. Focusing on [strategic focus] might be crucial. This could really set us apart and address the evolving needs of our customers. How does that align with your vision?"
-        - "One thing that stands out is the power of creating a compelling narrative around our strategy. Stories resonate more deeply than mere data points. How do you think we can weave our strategy into a story that engages our stakeholders?"
+        Note: Focus on directly answering the current question while drawing from your industry and company knowledge as needed."""
 
-        3. **Explore Unconventional Approaches:**
-        - "Sometimes, the most effective strategies come from thinking outside the conventional framework. Instead of just following the data, we might consider the psychological aspects that drive customer decisions. What unique insights have you gathered from your interactions with customers?"
-        - "Innovation often stems from challenging the status quo. By looking at things differently, we can uncover opportunities that others might miss. How can we apply this kind of thinking to our current strategy?"
-
-        4. **Summarize and Invite Further Discussion:**
-        - "So, it seems like innovation, understanding customer behavior, and strategic storytelling are key areas for us. Does this resonate with your perspective?"
-        - "I'd love to hear any additional thoughts or questions you might have. What else should we consider as we move forward?"
-
-        Use this structure to keep the conversation natural and engaging, ensuring the client feels involved and informed throughout the discussion. Your language should be story-driven, reflecting key strategic insights to provide a unique and compelling perspective.
-
-        """
-
-        timeout = httpx.Timeout(120.0, connect=180.0)
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(
-                'https://api.openai.com/v1/chat/completions',
-                json={
-                    "model": "gpt-4o-2024-05-13",
-                    "messages": [
-                        {"role": "system", "content": f"Writing Style: {writing_style} \n\n End of Instructions --------- Our Conversation so far: {fetched_talks}. Do not give irrelevant answers even if the contextual has irrelevant information. Use Sentence case for output. Start new paragraphs with ** and \n\n. Answer only to user question."},
-                        {"role": "user", "content": user_input}
-                    ]
-                },
-                headers={"Authorization": f"Bearer {api_key}"}
-            )
-            response.raise_for_status()
-            response_data = response.json()
-            
-            if 'choices' in response_data and response_data['choices']:
-                result = response_data['choices'][0].get('message', {}).get('content', '').strip()
-                logger.info("Processed Orange Chat")
-                
-                # Attempt to save the chat, but continue if it fails
-                try:
-                    new_messages = [
-                        {'role': 'user', 'content': user_input},
-                        {'role': 'assistant', 'content': result}
-                    ]
-                    save_chat(industry, client, purpose, new_messages)
-                except Exception as e:
-                    logger.error(f"Failed to save chat: {e}")
-                
-                return result
-            else:
-                return "No Orange analysis generated"
-    except Exception as e:
-        logger.error(f"Unexpected error in Orange Chat: {e}")
-        traceback.print_exc()
-        return f"Unexpected Error: {str(e)}"
-    
-
-async def generate_orange_script(request, context, client):
-    purpose = request.purpose
-    
-    writing_style = f"""
-    User Inputs:
-
-    About our Company: {client}
-    Industry Developments: {context}
-    Target Audience: Entrepreneurs, Business Decision Makers and Startup founders in Global Business hubs like Silicon Valley
-    Purpose: {purpose}
-
-    Using the above inputs, You are tasked with creating a concise, thought-provoking 30 second video script for a high-net-worth and ultra-high-net-worth audience, including entrepreneurs, business decision-makers, and startup founders in global business hubs like Silicon Valley. The script should be engaging, memorable, and aligned with Montaigne's principles of critical thinking and personal observation.
-    
-    Using this information, create a script that follows this structure:
-    1. Open with a thought-provoking industry-related question or scenario
-    2. Present a common industry challenge from an unexpected angle
-    3. Introduce the company's approach as a fresh perspective, without directly promoting it
-    4. Provide a concrete, counterintuitive example that challenges conventional thinking
-    5. Close with an inspiring message that encourages rethinking industry norms
-
-    Adhere to these content and tone guidelines:
-    - Use clear, accessible language with a conversational yet professional tone
-    - Avoid direct promotion or mention of company services
-    - Balance analytical observations with surprising or emotionally resonant elements
-    - Maintain an air of intellectual curiosity and discovery throughout
-
-    Your output should radiate the learning from below:
-
-    1. Insights from Montaigne's essays, emphasizing:
-    - Critical thinking and questioning assumptions
-    - The importance of personal experience and observation
-    - How cultural and societal norms shape our perceptions
-    - The role of skepticism in decision-making
-    - Balancing tradition and innovation in business
-
-    2. Inspiration from key works in business and complexity theory, including:
-    - "The Innovators" by Walter Isaacson
-    - "Chaos: The Amazing Science of the Unpredictable" by James Gleick
-    - "The Black Swan" by Nassim Nicholas Taleb
-    - "Zero to One" by Peter Thiel
-    - "The Lean Startup" by Eric Ries
-    - "Business Model Generation" by Alexander Osterwalder
-    - "Cybernetics in Management" by F.H. George
-
-    Post Overall IMPACT:
-    - Prompts the audience to question their current perspective
-    - Presents a fresh viewpoint that adds unique value to industry thinking
-    - Aligns with Montaigne's principles of critical thinking and personal observation
-
-    Output your script within 30 seconds when read aloud at a natural pace.
-    
-    
-    """
-    
-    print("Processing with Anthropic Script Generator")
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-
-    try:
-        anthropic = Anthropic(api_key=api_key)
-        
-        prompt = f"{writing_style}\n\nClient: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
-
-        completion = anthropic.completions.create(
-            model="claude-3-opus-20240229",
-            max_tokens_to_sample=1000,
-            prompt=prompt
+        # Generate response
+        message = anthropic_client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            temperature=0.7,
+            system=writing_style,
+            messages=[
+                {
+                    "role": "user",
+                    "content": user_message
+                }
+            ]
         )
 
-        result = completion.completion.strip()
+        # Clean and validate response
+        if hasattr(message.content, 'text'):
+            response = str(message.content.text)
+        elif isinstance(message.content, list):
+            response = str(message.content[0].text if hasattr(message.content[0], 'text') else message.content[0])
+        else:
+            response = str(message.content)
+
+        response = response.strip()
         
-        char_count_output = len(result)
-        char_count_input = len(prompt)
-        input_cost = char_count_input * 0.015 / 1000  # Anthropic's pricing may differ, adjust as needed
-        output_cost = char_count_output * 0.015 / 1000
-        total_cost = input_cost + output_cost
-        cost_in_inr = total_cost * 86
-        print(f"Anthropic Script Input: {input_cost}, Anthropic Script Output: {output_cost}, Anthropic Script Total Cost: {total_cost}, Anthropic Script Cost in INR: {cost_in_inr}")
-        
-        return result
-    except asyncio.CancelledError:
-        return "Task cancelled"
+        if not response:
+            return "Could you please clarify your question? I want to ensure I provide a relevant response."
+
+        return response
+
     except Exception as e:
-        print(f"Unexpected error in Anthropic Script Generator: {e}")
-        traceback.print_exc()
-        return f"Error generating content: {str(e)}"
+        logger.error(f"Discussion error: {str(e)}")
+        return "I apologize for the interruption. Could you please rephrase your question?"
     
 
-
-async def generate_orange_script_ai(request, context, client):
+async def generate_orange_script_ai(request, context, industry):
     purpose = request.purpose
     
-    writing_style = f"""
-    You are tasked with creating a concise, thought-provoking video script for a high-net-worth individual (HNWI) and ultra-high-net-worth individual (UHNWI) audience. The script should be engaging, intellectually stimulating, and tailored for busy business leaders and entrepreneurs. Your goal is to challenge conventional thinking and present fresh perspectives without directly promoting the company.
+    # Define the system prompt as an f-string
+    writing_style = f"""You are an expert scriptwriter creating high-impact video content that connects meaningful insights with practical value. Your expertise includes crafting narratives that resonate with HNWI/UHNWI audiences while addressing specific business purposes.
 
-    Here are the key inputs for your script:
+    Task: Generate a sophisticated 60-80 word video script that fulfills the stated purpose while maintaining connection to the provided context. Length: 20-30 seconds.
 
-    <client>
-    {client}
-    </client>
+    Analysis Steps:
+    1. First, understand the specific purpose requested
+    2. Identify how the provided context relates to this purpose
+    3. Determine the most effective narrative approach based on purpose:
+    - For product launches/features: Focus on transformation and value
+    - For thought leadership: Focus on insights and future trends
+    - For brand building: Focus on vision and differentiation
+    - For customer education: Focus on solutions and benefits
 
-    <context>
-    {context}
-    </context>
+    Script Structure:
+    1. Opening hook - Capture attention with relevant challenge or insight
+    2. Main perspective - Present key message aligned with purpose
+    3. Supporting evidence - Use context to strengthen the narrative
+    4. Concrete example - Demonstrate impact or application
+    5. Inspiring close - Drive viewer to intended action
 
-    <purpose>
-    {purpose}
-    </purpose>
+    Requirements:
+    - Adapt tone and focus based on stated purpose
+    - Use sophisticated yet accessible language
+    - Maintain exclusive, insider tone
+    - Ensure clear connection between context and purpose
+    - Balance intellectual depth with practical relevance"""
 
-    Create a script following this structure:
-    1. Open with a thought-provoking industry-related question or scenario (1 sentence)
-    2. Present a common industry challenge from an unexpected angle (1-2 sentences)
-    3. Introduce a fresh perspective, subtly inspired by the company's approach (1-2 sentences)
-    4. Provide a concrete, counterintuitive example that challenges conventional thinking (1-2 sentences)
-    5. Close with a brief, inspiring message that encourages rethinking industry norms (1 sentence)
+    # Create the user message
+    user_message = f"""Context: {context}
+        Industry: {industry}
+        Purpose: {purpose}
 
-    Content and tone requirements:
-    - Use clear, concise language with a sophisticated yet accessible tone
-    - Avoid direct promotion or mention of company services
-    - Balance analytical insights with surprising or emotionally resonant elements
-    - Maintain an air of exclusivity and insider knowledge
-
-    Your script should be approximately 60-80 words long, suitable for a 20-30 second video.
-
-    After creating the script, generate 3-5 background stock video ideas that complement and enhance the narration. These ideas should be visually striking, relevant to the script's content, and help illustrate the concepts discussed. Focus on unique and thought-provoking imagery that aligns with the script's innovative approach and appeals to a HNWI/UHNWI audience.
-
-    Present your final output in the following format:
-
-    <output>
-    [Video Script]
-
-    Background Video Ideas:
-    1. [First video idea]
-    2. [Second video idea]
-    3. [Third video idea]
-    [Add more if necessary]
-    </output>
-
-    Remember to create a script that is sophisticated, minimal, and impactful, while incorporating subtle elements that create a sense of exclusivity and insider knowledge for the target audience. The background video ideas should complement this approach and enhance the overall impact of the video.
-        
-    """
-    print("Processing with Anthropic Script Generator")
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+        Create a script that precisely fulfills this purpose while leveraging the provided context. Ensure the narrative aligns with what a HNWI/UHNWI audience would expect for this specific type of content. Focus on delivering clear value within the strict 30-second timeframe. Do not give fillers, templates or other explanations in the output. You can still give the video ideas. Describe the product or person in the output as per the requirement."""
 
     try:
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
+
         anthropic_client = anthropic.Anthropic(api_key=api_key)
         
         message = anthropic_client.messages.create(
-            model="claude-3-opus-20240229",
+            model="claude-3-5-sonnet-20241022",
             max_tokens=1000,
             temperature=0.5,
             system=writing_style,
@@ -753,7 +786,7 @@ async def generate_orange_script_ai(request, context, client):
                     "content": [
                         {
                             "type": "text",
-                            "text": f"Client: {client}\n\nBelow is the user input:\nPurpose: {purpose}\nAbout Our Company: {context}\n\nFollow writing instructions strictly. Craft the script as if it's a thought leadership piece, inspired by Montaigne's approach to critical thinking. The final product should be clear, compelling, and offer a fresh perspective on the industry, very subtly positioning around the purpose. Do not mention specific books or authors in the output. Strictly restrict the output to 30 seconds of content. Deliver the narration in a thoughtful, engaging business tone that provokes reflection."
+                            "text": user_message
                         }
                     ]
                 }
@@ -761,17 +794,10 @@ async def generate_orange_script_ai(request, context, client):
         )
 
         result = message.content
-
-        char_count_output = len(result)
-        char_count_input = len(writing_style) + len(client) + len(purpose) + len(context)
-        input_cost = char_count_input * 0.015 / 1000  # Anthropic's pricing may differ, adjust as needed
-        output_cost = char_count_output * 0.015 / 1000
-        total_cost = input_cost + output_cost
-        cost_in_inr = total_cost * 86
-        print(f"Anthropic Script Input: {input_cost}, Anthropic Script Output: {output_cost}, Anthropic Script Total Cost: {total_cost}, Anthropic Script Cost in INR: {cost_in_inr}")
-        
         return result
+
     except Exception as e:
-        print(f"Unexpected error in Anthropic Script Generator: {e}")
+        error_msg = f"Unexpected error in Script Generator: {str(e)}"
+        print(error_msg)
         traceback.print_exc()
-        return f"Error generating content: {str(e)}"
+        return error_msg

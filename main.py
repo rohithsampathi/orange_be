@@ -1,3 +1,5 @@
+# main.py
+
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -5,7 +7,7 @@ from pydantic import BaseModel
 from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
-from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script, generate_orange_script_ai
+from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script_ai
 from utils.context import why_luxofy, why_1acre, why_montaigne
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 from utils.database import save_chat
@@ -255,15 +257,15 @@ async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, curre
         user_input = request.user_input
 
         if request.client == "Luxofy":
-            context = why_luxofy
+            client = why_luxofy
         elif request.client == "1acre":
-            context = why_1acre
+            client = why_1acre
         elif request.client == "Montaigne":
-            context = why_montaigne
+            client = why_montaigne
 
         context = retrieve_and_generate_answer_3d(industry)
         
-        response = await generate_orange_chat(industry, context, purpose, user_input, context)
+        response = await generate_orange_chat(industry, context, purpose, user_input, client)
         
         new_messages = [
             {'role': 'user', 'content': user_input},

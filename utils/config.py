@@ -1,3 +1,5 @@
+# utils/config.py
+
 import os
 from datetime import timedelta
 from pinecone import Pinecone, ServerlessSpec
@@ -21,7 +23,11 @@ users_db = {
     "testuser": {"username": "testuser", "password": "testpass"},
     "kavya@montaigne.co": {"username": "kavya@montaigne.co", "password": "kavya@msbs"},
     "media@montaigne.co": {"username": "media@montaigne.co", "password": "media@msbs"},
-    "rohith@montaigne.co": {"username": "rohith@montaigne.co", "password": "rohith@msbs"}
+    "rohith@montaigne.co": {"username": "rohith@montaigne.co", "password": "rohith@msbs"},
+    "moksh@montaigne.co": {"username": "moksh@montaigne.co", "password": "moksh@msbs"},
+    "kharvannan@montaigne.co": {"username": "kharvannan@montaigne.co", "password": "kharvannan@msbs"},
+    "jahnavi@montaigne.co": {"username": "jahnavi@montaigne.co", "password": "jahnavi@msbs"},
+    "kshiti@montaigne.co": {"username": "kshiti@montaigne.co", "password": "kshiti@msbs"},
 }
 
 

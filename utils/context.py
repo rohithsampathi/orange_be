@@ -16,9 +16,108 @@ why_luxofy = """
         Uncompromising Standards: Adhering to the highest quality benchmarks in the industry.
 
         Property Portfolio:
-        Diverse range including villas, apartments, and penthouses
-        Sizes ranging from cozy studios to spacious 5BHK mansions
-        Unique features like private infinity pools, panoramic views, and state-of-the-art security systems
+        Goa
+
+        1. Azalea @ Candolim
+        Type: 4 Luxury Mansions (5 BHK, 5380 sq ft)
+        Price: INR 9 Cr/Unit Onwards
+        Possession: December 2026
+        Highlights: Panoramic field view, walking distance to the beach and 5-star joints.
+        
+        2. Pine Cliff @ Parra
+        Type: 3 Luxury Mansions (5 BHK, 6684–8611 sq ft)
+        Price: INR 9 Cr/Unit Onwards
+        Possession: December 2024
+        Highlights: Close to happening beaches, clubs, and restaurants.
+        
+        3. The Floretta @ Parra
+        Type: 8 Luxury Villas (4 BHK, 3696 sq ft)
+        Price: INR 5 Cr/Unit Onwards
+        Possession: December 2025
+        Highlights: Near famous Coconut Tree Road.
+        
+        4. Casa De Fresco @ Guirim
+        Type: 8 Luxury Villas (3 BHK, 3229 sq ft)
+        Price: INR 3.75 Cr/Unit Onwards
+        Possession: June 2025
+        Highlights: Field views, calm life, well-connected.
+        
+        5. Casa Hill Crest @ Bastora
+        Type: 22 Luxury Villas (3 & 4 BHK, 3950–5000 sq ft)
+        Status: Construction Started
+        Highlights: Panoramic field views, Goan village life.
+        
+        6. The Zinnia @ Sangolda (Upcoming)
+        Type: 8 Luxury Villas (4 BHK, 4575–5920 sq ft)
+        Highlights: Clubhouse, lush green fields.
+        
+        7. Springfield @ Aldona (Upcoming)
+        Type: 4 Ultra Luxury Mansions (4 BHK, 7532–8177 sq ft)
+        Highlights: Pure village life, celebrity hotspot.
+        
+        8. Casa Adelaide @ Aldona (Upcoming)
+        Type: 9 Luxury Villas (4 BHK, 4100–4950 sq ft)
+        Highlights: Village life, celebrity favorite.
+        
+        9. Eleva Suites @ Calangute
+        Type: 32 Apartments (2 BHK & Penthouse, 1140–1450 sq ft)
+        Price: INR 1.48 Cr/Unit Onwards
+        Possession: March 2026
+        Highlights: Plunge pool for each apartment.
+        
+        10. Casa Margarida @ Baga-Arpora
+        Type: 22 Apartments (2 BHK)
+        Price: INR 1.25 Cr/Unit Onwards
+        Highlights: Pool, clubhouse, garden.
+        
+        11. Amara Living @ Porvorim
+        Type: 14 Apartments (2 & 3 BHK, 1077–1462 sq ft)
+        Price: INR 70 Lakhs/Unit Onwards
+        Possession: January 2025
+        Highlights: Proximity to malls, markets, and beaches.
+        
+        12. Mekan Vista @ Nerul (Upcoming)
+        Type: 95 Units (2, 3 BHK & Penthouse)
+        Highlights: River view, 2 big pools, field views.
+        
+        13. Vrinda @ Socorro (Upcoming)
+        Type: 180 Apartments & 11 Villas (2, 3 BHK & Penthouse)
+        Status: Construction Starting 2025
+        Highlights: Goan city life.
+        
+        Himachal Pradesh
+        
+        1. Azul Estilo @ Kasauli
+        Type: 20 Ultra Luxury Villas (4 BHK, 4372 sq ft)
+        Price: INR 5 Cr/Unit Onwards
+        Status: Sample Villa Ready
+        Highlights: Mountain views, concierge services.
+        
+        2. Nestling Woods @ Kumarhatti
+        Type: 80 Apartments (Studio & 1 BHK, 707–1061 sq ft)
+        Price: INR 60 Lakhs/Unit Onwards
+        Possession: December 2026
+        Highlights: Strategic location on State Highway.
+        
+        3. Villas @ Chail (Upcoming)
+        Type: 4 & 5 BHK Villas
+        Highlights: Glacier and Shimla views.
+        
+        Maharashtra
+        1. Nandan Vatika @ Satarda
+        Type: 32 Premium Plots
+        Price: INR 12,000/Sq Mt Onwards
+        Highlights: 20 mins from MOPA Airport, mountain views.
+        
+        2. Govind Vatika @ Satarda
+        Type: 50 Premium Plots
+        Price: INR 12,000/Sq Mt Onwards
+        Highlights: Launched, clear titles.
+        Unique Selling Points of Luxofy
+        Prime Locations: Properties in tourist hotspots and serene natural settings.
+        Tailored Offerings: A wide range of configurations, from villas to apartments.
+        Luxury Amenities: Plunge pools, concierge services, clubhouses, and panoramic views.
+        Strong Market Presence: Expanding portfolio in Goa, Himachal Pradesh, and Maharashtra.
 
         Locations:
         Goa: Properties in prime areas such as Parra, Candolim, Guirim, Porvorim, Calangute, and Sangolda
