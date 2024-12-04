@@ -8,7 +8,7 @@ from typing import Optional
 from jose import jwt
 from datetime import datetime, timedelta
 from utils.agt import generate_orange_reel, generate_orange_poll, generate_orange_post, generate_orange_strategy, generate_orange_email, retrieve_and_generate_answer_3d, generate_orange_chat, generate_orange_script_ai
-from utils.context import why_luxofy, why_1acre, why_montaigne
+from utils.context import why_luxofy, why_1acre, why_montaigne, why_mybentos
 from utils.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, users_db
 from utils.database import save_chat
 import logging
@@ -129,6 +129,8 @@ async def generate_orange_reel_endpoint(request: GeneralRequest, background_task
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -154,6 +156,8 @@ async def generate_orange_email_endpoint(request: EmailRequest, background_tasks
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
         
         # Use target_industry instead of industry
         industry = request.target_industry
@@ -182,6 +186,8 @@ async def generate_orange_post_endpoint(request: GeneralRequest, background_task
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -207,6 +213,8 @@ async def generate_orange_poll_endpoint(request: GeneralRequest, background_task
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -232,6 +240,8 @@ async def generate_orange_strategy_endpoint(request: GeneralRequest, background_
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
         
         # Cancel any existing tasks for this user
         task_key = f"task_{current_user['username']}"
@@ -262,6 +272,8 @@ async def generate_orange_strategy_chat_endpoint(request: StrategyRequest, curre
             client = why_1acre
         elif request.client == "Montaigne":
             client = why_montaigne
+        elif request.client == "MyBentos":
+            client = why_mybentos
 
         context = retrieve_and_generate_answer_3d(industry)
         
@@ -288,6 +300,8 @@ async def generate_orange_script_endpoint(request: ScriptRequest, background_tas
             context = why_1acre
         elif request.client == "Montaigne":
             context = why_montaigne
+        elif request.client == "MyBentos":
+            context = why_mybentos
 
         indus = request.industry
 

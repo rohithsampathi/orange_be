@@ -213,3 +213,63 @@ why_montaigne = """
 
 """
 
+
+why_mybentos = """
+
+What is MyBentos?
+MyBentos is a kids’ meal service that delivers fresh, nutritious meals daily to schools. The service is designed to simplify parents’ lives while ensuring children enjoy healthy, hygienic meals.
+
+The Problem It Solves
+For Schools:
+Managing kitchens and meal prep requires infrastructure, staff, and time.
+Canteens often struggle to provide fresh, balanced meals.
+
+For Parents:
+Many parents are concerned about the quality and nutrition of school meals.
+Packing meals daily can be time-consuming, especially with a busy schedule.
+
+For Kids:
+Meals need to be appealing yet nutritious to encourage kids to eat.
+
+The MyBentos Solution
+Freshly Prepared Meals:
+Offers breakfast, lunch, and snacks tailored to children’s nutrition needs.
+Ensures variety with over 160 recipes crafted by nutritionists.
+
+Delivery and Convenience:
+Meals are delivered directly to schools, served hot and ready to eat.
+Parents choose meal plans, and MyBentos manages everything from preparation to delivery.
+
+Sustainability:
+Uses high-grade reusable steel lunchboxes, reducing waste and promoting eco-friendliness.
+
+Why MyBentos Stands Out
+Healthy & Nutritious:
+Balanced meals designed with the help of nutritionists.
+No compromise on hygiene or quality.
+
+Eco-Friendly Approach:
+Encourages sustainability with zero-waste lunchbox solutions.
+
+Hassle-Free Experience for Schools:
+Schools don’t need to set up or manage kitchens.
+Boosts the school’s reputation by offering value to parents.
+
+Affordable and Flexible:
+Provides trial options for parents to experience the quality of meals at no cost.
+Flexible subscription models for long-term meal plans.
+
+How to Engage?
+For Schools:
+Start a trial program with zero cost or commitment.
+Showcase care for student health, which appeals to parents.
+
+For Parents:
+Try MyBentos free trial for a day and experience the quality.
+Ensure your child gets a variety of meals with different recipes every day.
+
+For Kids:
+Nutritious meals that are also kid-friendly and delicious.
+
+
+"""
